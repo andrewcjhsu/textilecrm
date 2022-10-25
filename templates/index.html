@@ -1,22 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+{% extends "layout.html" %}
 
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="apple-touch-icon" sizes="76x76" href="../../static/assets/img/apple-icon.png">
-  <link rel="icon" type="image/png" href="../../static/assets/img/favicon.png">
-  <!--     Fonts and icons     -->
-  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700,200|Open+Sans+Condensed:700" rel="stylesheet">
-  <!-- Nucleo Icons -->
-  <link href="../../static/assets/css/nucleo-icons.css" rel="stylesheet" />
-  <link href="../../static/assets/css/nucleo-svg.css" rel="stylesheet" />
-  <!-- Font Awesome Icons -->
-  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
-  <!-- CSS Files -->
-  <link id="pagestyle" href="../../static/assets/css/now-design-system-pro.css?v=2.2.0" rel="stylesheet" />
-</head>
-
+{% block body %}
 <body class="rental">
   <!-- -------- START HEADER ------- -->
   <header>
@@ -25,7 +10,7 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-8 mx-auto text-white text-center">
-            <h2 class="text-white">Textile CRM</h2>
+            <h2 class="text-white">Movie Theater Database Query</h2>
             <p class="lead">Make queries to the movie theater database. Earliest entry is from September 1, 2022.</p>
             <h2 class="text-white ">Using Postgres</h2>
             <p class="lead text-white mt-3 font-weight-normal">{{ version }}</p>
@@ -34,259 +19,380 @@
       </div>
     </div>
     <div class="container">
-        <form method="post" action="/">
+        <form method="post" action="/sales_dow#sales_dow" id="sales_dow">
             <section class="py-6">
                 <div class="row bg-white shadow mt-n5 border-radius-lg pb-4 p-3 mx-sm-0 mx-1 position-relative">
-                    <div class="col-lg-3 mt-lg-n2 mt-2">
-                        <label for="table">Sales and Attendance by Day of Week</label>
-                        <select class="form-control" name="table-choice" id="table-choice" placeholder="Query From Table">
-                            <option value="September" selected="">September</option>
-                            <option value="October">October</option>
-                            <option value="Month_All">All</option>
-                        </select>
-{#                        <table id="sales_dow_table">#}
-{#                      <tr>#}
-{#                        <th>Weekday</th>#}
-{#                        <th>Total_Sales</th>#}
-{#                        <th>Adult_Sales</th>#}
-{#                        <th>Kid_Sales</th>#}
-{#                        <th>Total_Attendance</th>#}
-{#                        <th>Adults_Attendance</th>#}
-{#                        <th>Kid_Attendance</th>#}
-{#                      </tr>#}
-{#                      {% for item in sales_dow %}#}
-{#                          <tr>#}
-{#                              <td><a>{{ item[0] }}</a></td>#}
-{#                              <td><a>{{ item[1] }}</a></td>#}
-{#                              <td><a>{{ item[2] }}</a></td>#}
-{#                              <td><a>{{ item[3] }}</a></td>#}
-{#                              <td><a>{{ item[4] }}</a></td>#}
-{#                              <td><a>{{ item[5] }}</a></td>#}
-{#                            <td><a>{{ item[6] }}</a></td>#}
-{#                          </tr>#}
-{#                      {% endfor %}#}
-{#                    </table>#}
+                    <div class="col-lg-8 mt-lg-n2 mt-2">
+                        <h3>Sales and Attendance by Day of Week</h3>
                     </div>
-                </div>
-                <div class="col-lg">
                     <label class="">&nbsp;</label>
-                    <button type="submit" class="btn bg-gradient-primary w-100 mb-0">Query</button>
-                </div>
-            </section>
-            <section class="pt-1 mt-1">
-              <div class="container">
-                <div class="row justify-content-center">
-                  <div class="col-lg-12">
-                    <div class="card">
-                      <div class="table-responsive">
-                        <table class="table align-items-center mb-0">
-                          <thead>
-                            <tr>
-                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Weekday</th>
-                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Total_Sales</th>
-                              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Adult_Sales</th>
-                              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Kid_Sales</th>
-                              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Total_Attendance</th>
-                              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Adults_Attendance</th>
-                              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Kid_Attendance</th>
-                              <th class="text-secondary opacity-7"></th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                              {% for item in sales_dow %}
-                                  <tr>
-                                      <td class="align-middle text-center text-sm">
-                                        <div class="d-flex px-2 py-1">
-                                            <h6 class="mb-0 text-xs">{{ item[0] }}</h6>
-                                        </div>
-                                      </td>
-                                      <td class="align-middle text-center text-sm">
-                                          <p class="text-xs font-weight-bold mb-0">{{ item[1] }}</p>
-                                      </td>
-                                      <td class="align-middle text-center text-sm">
-                                          <p class="text-xs font-weight-bold mb-0">{{ item[2] }}</p>
-                                      </td>
-                                      <td class="align-middle text-center text-sm">
-                                          <p class="text-xs font-weight-bold mb-0">{{ item[3] }}</p>
-                                      </td>
-                                      <td class="align-middle text-center text-sm">
-                                          <p class="text-xs font-weight-bold mb-0">{{ item[4] }}</p>
-                                      </td>
-                                      <td class="align-middle text-center text-sm">
-                                          <p class="text-xs font-weight-bold mb-0">{{ item[5] }}</p>
-                                      </td>
-                                      <td class="align-middle text-center text-sm">
-                                          <p class="text-xs font-weight-bold mb-0">{{ item[6] }}</p>
-                                      </td>
-                                      <td class="align-middle text-center text-sm">
-                                          <p class="text-xs font-weight-bold mb-0">{{ item[7] }}</p>
-                                      </td>
-                                  </tr>
-                              {% endfor %}
-                          </tbody>
-                        </table>
-                      </div>
+                    <div class="col-lg-3">
+                        <select class="form-control" name="table-choice" id="sales_dow-choice" placeholder="Query From Table">
+                            <option value="September">September</option>
+                            <option value="October">October</option>
+                            <option value="Month_All" selected>All</option>
+                        </select>
                     </div>
-                  </div>
+                    <label class="">&nbsp;</label>
+                    <div class="col-lg">
+                        <button type="submit" class="btn bg-gradient-primary w-30 mb-0">Query</button>
+                    </div>
+
+                    <section class="pt-1 mt-4">
+                      <div class="container">
+                        <div class="row justify-content-center">
+                          <div class="col-lg-12">
+                            <div class="card">
+                              <div class="table-responsive">
+                                <table class="table align-items-center mb-0">
+                                  <thead>
+                                    <tr>
+                                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Weekday</th>
+                                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Total_Sales</th>
+                                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Adult_Sales</th>
+                                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Kid_Sales</th>
+                                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Total_Attendance</th>
+                                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Adults_Attendance</th>
+                                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Kid_Attendance</th>
+                                      <th class="text-secondary opacity-7"></th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                      {% for item in sales_dow %}
+                                          <tr>
+                                              <td class="align-middle text-center text-sm">
+                                                <div class="d-flex px-2 py-1">
+                                                    <h6 class="mb-0 text-xs">{{ item[0] }}</h6>
+                                                </div>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[1] }}</p>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[2] }}</p>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[3] }}</p>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[4] }}</p>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[5] }}</p>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[6] }}</p>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[7] }}</p>
+                                              </td>
+                                          </tr>
+                                      {% endfor %}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </section>
                 </div>
-              </div>
             </section>
         </form>
-      </div>
-  <section class="py-6">
-    <div class="row bg-white shadow mt-n5 border-radius-lg pb-4 p-3 mx-sm-0 mx-1 position-relative">
-      <div class="col-lg-3 mt-lg-n2 mt-2">
-        <label for="table">Sales and Attendance by Film</label>
-        <select class="form-control" name="table-choice" id="table-choice" placeholder="Query From Table">
-          <option value="September" selected="">September</option>
-          <option value="October">October</option>
-          <option value="Month_All">All</option>
-        </select>
-        <table id="sales_by_film_table">
-          <tr>
-            <th>Film_Name</th>
-            <th>Genre</th>
-            <th>Total_Sales</th>
-            <th>Adults_Sales</th>
-            <th>Kid_Sales</th>
-            <th>Total_Attendance</th>
-            <th>Adults_Attendance</th>
-            <th>Kid_Attendance</th>
-          </tr>
-          {% for item in sales_by_film %}
-               <tr>
-                  <td><a>{{ item[0] }}</a></td>
-                  <td><a>{{ item[1] }}</a></td>
-                  <td><a>{{ item[2] }}</a></td>
-                  <td><a>{{ item[3] }}</a></td>
-                  <td><a>{{ item[4] }}</a></td>
-                  <td><a>{{ item[5] }}</a></td>
-                  <td><a>{{ item[6] }}</a></td>
-                  <td><a>{{ item[7] }}</a></td>
-               </tr>
-          {% endfor %}
-        </table>
-      </div>
-      </div>
-      <div class="col-lg">
-        <label class="">&nbsp;</label>
-        <button type="button" class="btn bg-gradient-primary w-100 mb-0">Query</button>
-      </div>
-        </div>
     </div>
-  </div>
-</section>
-<form method="post" action="/">
-<section class="py-7">
-  <div class="row bg-white shadow mt-n5 border-radius-lg pb-4 p-3 mx-sm-0 mx-1 position-relative">
-    <div class="col-lg-3 mt-lg-n2 mt-2">
-      <label for="table">Return on Investment by Film</label>
+    <div class="container">
+        <form method="post" action="/sales_by_film#sales_by_film" id="sales_by_film">
+            <section class="py-6">
+                <div class="row bg-white shadow mt-n5 border-radius-lg pb-4 p-3 mx-sm-0 mx-1 position-relative">
+                    <div class="col-lg-8 mt-lg-n2 mt-2">
+                        <h3>Sales and Attendance by Film</h3>
+                    </div>
+                    <label class="">&nbsp;</label>
+                    <div class="col-lg-3">
+                        <select class="form-control" name="table-choice" id="sales-by-film-select" placeholder="Query From Table">
+                            <option value="September" selected="">September</option>
+                            <option value="October">October</option>
+                            <option value="Month_All" selected>All</option>
+                        </select>
+                    </div>
+                    <label class="">&nbsp;</label>
+                    <div class="col-lg">
+                        <button type="submit" class="btn bg-gradient-primary w-30 mb-0">Query</button>
+                    </div>
+
+                    <section class="pt-1 mt-4">
+                      <div class="container">
+                        <div class="row justify-content-center">
+                          <div class="col-lg-12">
+                            <div class="card">
+                              <div class="table-responsive">
+                                <table class="table align-items-center mb-0">
+                                  <thead>
+                                    <tr>
+                                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Film_Name</th>
+                                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Genre</th>
+                                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Total_Sales</th>
+                                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Adults_Sales</th>
+                                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Kid_Sales</th>
+                                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Total_Attendance</th>
+                                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Adults_Attendance</th>
+                                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Kid_Attendance</th>
+                                        <th class="text-secondary opacity-7"></th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                      {% for item in sales_by_film %}
+                                          <tr>
+                                              <td class="align-middle text-center text-sm">
+                                                <div class="d-flex px-2 py-1">
+                                                    <h6 class="mb-0 text-xs">{{ item[0] }}</h6>
+                                                </div>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[1] }}</p>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[2] }}</p>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[3] }}</p>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[4] }}</p>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[5] }}</p>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[6] }}</p>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[7] }}</p>
+                                              </td>
+                                          </tr>
+                                      {% endfor %}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </section>
+                </div>
+            </section>
+        </form>
     </div>
+    <div class="container">
+        <form method="post" action="/film_roi#film_roi" id="film_roi">
+            <section class="py-6">
+                <div class="row bg-white shadow mt-n5 border-radius-lg pb-4 p-3 mx-sm-0 mx-1 position-relative">
+                    <div class="col-lg-8 mt-lg-n2 mt-2">
+                        <h3>Film Profitability</h3>
+                    </div>
+
+                    <section class="pt-1 mt-4">
+                        <div class="container">
+                        <div class="row justify-content-center">
+                          <div class="col-lg-12">
+                            <div class="card">
+                              <div class="table-responsive">
+                                <table class="table align-items-center mb-0">
+                                  <thead>
+                                    <tr>
+                                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Film_Name</th>
+                                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Genre</th>
+                                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Cumulative_Sales</th>
+                                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Procurement_Cost</th>
+                                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Profit</th>
+                                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ROI</th>
+                                      <th class="text-secondary opacity-7"></th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                      {% for item in film_roi %}
+                                          <tr>
+                                              <td class="align-middle text-center text-sm">
+                                                <div class="d-flex px-2 py-1">
+                                                    <h6 class="mb-0 text-xs">{{ item[0] }}</h6>
+                                                </div>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[1] }}</p>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[2] }}</p>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[3] }}</p>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[4] }}</p>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[5] }}</p>
+                                              </td>
+                                          </tr>
+                                      {% endfor %}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </section>
+                </div>
+            </section>
+        </form>
     </div>
-    <table id="film_roi_table">
-      <tr>
-        <th>Film_Name</th>
-        <th>Genre</th>
-        <th>Cumulative_Sales</th>
-        <th>Procurement_Cost</th>
-        <th>Profit</th>
-        <th>ROI</th>
-      </tr>
-      {% for item in film_roi %}
-           <tr>
-              <td><a>{{ item[0] }}</a></td>
-              <td><a>{{ item[1] }}</a></td>
-              <td><a>{{ item[2] }}</a></td>
-              <td><a>{{ item[3] }}</a></td>
-              <td><a>{{ item[4] }}</a></td>
-              <td><a>{{ item[5] }}</a></td>
-           </tr>
-      {% endfor %}
-    </table>
-      </div>
-  </div>
-</div>
-</section>
-</form>
-<form method="post" action="/">
-<section class="py-7">
-  <div class="row bg-white shadow mt-n5 border-radius-lg pb-4 p-3 mx-sm-0 mx-1 position-relative">
-    <div class="col-lg-3 mt-lg-n2 mt-2">
-      <label for="table">Return on Investment by Promotion</label>
-      <select class="form-control" name="table-choice" id="table-choice" placeholder="Query From Table">
-        <option value="September" selected="">September</option>
-        <option value="October">October</option>
-        <option value="Month_All">All</option>
-      </select>
-      <table id="promo_roi_table">
-        <tr>
-          <th>Planner</th>
-          <th>Promotion_Name</th>
-          <th>Promo_Sales</th>
-          <th>Promo_Costs</th>
-          <th>Profit</th>
-          <th>ROI</th>
-        </tr>
-        {% for item in promo_roi %}
-             <tr>
-                <td><a>{{ item[0] }}</a></td>
-                <td><a>{{ item[1] }}</a></td>
-                <td><a>{{ item[2] }}</a></td>
-                <td><a>{{ item[3] }}</a></td>
-                <td><a>{{ item[4] }}</a></td>
-                <td><a>{{ item[5] }}</a></td>
-              </tr>
-        {% endfor %}
-      </table>
+    <div class="container">
+        <form method="post" action="/promo_roi#promo_roi" id="promo_roi">
+            <section class="py-6">
+                <div class="row bg-white shadow mt-n5 border-radius-lg pb-4 p-3 mx-sm-0 mx-1 position-relative">
+                    <div class="col-lg-8 mt-lg-n2 mt-2">
+                        <h3>Promotion Evaluation</h3>
+                    </div>
+                    <label class="">&nbsp;</label>
+                    <div class="col-lg-3">
+                        <select class="form-control" name="table-choice" id="promo-roi-select" placeholder="Query From Table">
+                            <option value="September" selected="">September</option>
+                            <option value="October">October</option>
+                            <option value="Month_All" selected>All</option>
+                        </select>
+                    </div>
+                    <label class="">&nbsp;</label>
+                    <div class="col-lg">
+                        <button type="submit" class="btn bg-gradient-primary w-30 mb-0">Query</button>
+                    </div>
+                    <section class="pt-1 mt-4">
+                      <div class="container">
+                        <div class="row justify-content-center">
+                          <div class="col-lg-12">
+                            <div class="card">
+                              <div class="table-responsive">
+                                <table class="table align-items-center mb-0">
+                                  <thead>
+                                    <tr>
+                                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Planner</th>
+                                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Promotion_Name</th>
+                                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Promo_Sales</th>
+                                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Promo_Costs</th>
+                                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Profit</th>
+                                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ROI</th>
+                                      <th class="text-secondary opacity-7"></th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                      {% for item in promo_roi %}
+                                          <tr>
+                                              <td class="align-middle text-center text-sm">
+                                                <div class="d-flex px-2 py-1">
+                                                    <h6 class="mb-0 text-xs">{{ item[0] }}</h6>
+                                                </div>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[1] }}</p>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[2] }}</p>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[3] }}</p>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[4] }}</p>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[5] }}</p>
+                                              </td>
+                                          </tr>
+                                      {% endfor %}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </section>
+                </div>
+            </section>
+        </form>
     </div>
+    <div class="container">
+        <form method="post" action="/pop_promo#pop_promo" id="pop_promo">
+            <section class="py-6">
+                <div class="row bg-white shadow mt-n5 border-radius-lg pb-4 p-3 mx-sm-0 mx-1 position-relative">
+                    <div class="col-lg-10 mt-lg-n2 mt-2">
+                        <h3>Most Popular Promotion by Member’s Age and Gender</h3>
+                    </div>
+                    <label class="">&nbsp;</label>
+                    <div class="col-lg-3">
+                        <select class="form-control" name="table-choice" id="pop-promo-select" placeholder="Query From Table">
+                            <option value="September" selected="">September</option>
+                            <option value="October">October</option>
+                            <option value="Month_All" selected>All</option>
+                        </select>
+                    </div>
+
+                    <label class="">&nbsp;</label>
+                    <div class="col-lg">
+                        <button type="submit" class="btn bg-gradient-primary w-30 mb-0">Query</button>
+                    </div>
+
+                    <section class="pt-1 mt-4">
+                          <div class="container">
+                            <div class="row justify-content-center">
+                              <div class="col-lg-12">
+                                <div class="card">
+                              <div class="table-responsive">
+                                <table class="table align-items-center mb-0">
+                                  <thead>
+                                    <tr>
+                                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Age</th>
+                                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Gender</th>
+                                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Planner</th>
+                                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Promotion_Name</th>
+                                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Total_Redemption</th>
+                                      <th class="text-secondary opacity-7"></th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                      {% for item in pop_promo %}
+                                          <tr>
+                                              <td class="align-middle text-center text-sm">
+                                                <div class="d-flex px-2 py-1">
+                                                    <h6 class="mb-0 text-xs">{{ item[0] }}</h6>
+                                                </div>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[1] }}</p>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[2] }}</p>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[3] }}</p>
+                                              </td>
+                                              <td class="align-middle text-center text-sm">
+                                                  <p class="text-xs font-weight-bold mb-0">{{ item[4] }}</p>
+                                              </td>
+                                          </tr>
+                                      {% endfor %}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </section>
+                </div>
+            </section>
+        </form>
     </div>
-    <div class="col-lg">
-      <label class="">&nbsp;</label>
-      <button type="button" class="btn bg-gradient-primary w-100 mb-0">Query</button>
-    </div>
-      </div>
-  </div>
-</div>
-</section>
-</form>
-<form method="post" action="/">
-<section class="py-7">
-  <div class="row bg-white shadow mt-n5 border-radius-lg pb-4 p-3 mx-sm-0 mx-1 position-relative">
-    <div class="col-lg-3 mt-lg-n2 mt-2">
-      <label for="table">Most Popular Promotion by Member’s Age and Gender</label>
-      <select class="form-control" name="table-choice" id="table-choice" placeholder="Query From Table">
-        <option value="September" selected="">September</option>
-        <option value="October">October</option>
-        <option value="Month_All">All</option>
-      </select>
-      <table id="pop_promo_table">
-        <tr>
-          <th>Age</th>
-          <th>Gender</th>
-          <th>Planner</th>
-          <th>Promotion_Name</th>
-          <th>Total_Redemption</th>
-        </tr>
-        {% for item in pop_promo %}
-        <td><a>{{ item[0] }}</a></td>
-        <td><a>{{ item[1] }}</a></td>
-        <td><a>{{ item[2] }}</a></td>
-        <td><a>{{ item[3] }}</a></td>
-        <td><a>{{ item[4] }}</a></td>
-        {% endfor %}
-      </table>
-    </div>
-    </div>
-    <div class="col-lg">
-      <label class="">&nbsp;</label>
-      <button type="button" class="btn bg-gradient-primary w-100 mb-0">Query</button>
-    </div>
-      </div>
-  </div>
-</div>
-</section>
-  </form>
   </header>
   <!-- -------- END HEADER 4 w/ search book a ticket form ------- -->
  </body>
-</html>
+{% endblock %}
