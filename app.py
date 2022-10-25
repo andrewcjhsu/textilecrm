@@ -123,27 +123,29 @@ def query_sales_dow():  # template for some query
         print(Month_choice)
         conn = get_db_connection()
         cur = conn.cursor()
-        if Month_choice == 'September':
+        if Month_choice == 'Customer':
             cur.execute(("""SELECT sum (o.deal_amount_aftertax) as rev, c.customer_name, c.type, c.class
                             FROM crm_opportunity o, crm_customer c  
                             WHERE o.stage = 'Closed_Won' 
                             AND o.customer_key = c.customer_key 
                             GROUP BY c.type, c.class, c.customer_name
-                            ORDER BY rev DESC; """))  # insert query here
+                            ORDER BY rev DESC
+                            limit 10; """))  # insert query here
         elif Month_choice == 'October':
             cur.execute(("""SELECT sum (o.deal_amount_aftertax) as rev, c.customer_name, c.type, c.class
                             FROM crm_opportunity o, crm_customer c  
                             WHERE o.stage = 'Closed_Won' 
                             AND o.customer_key = c.customer_key 
                             GROUP BY c.type, c.class, c.customer_name
-                            ORDER BY rev DESC; """))  # insert query here
+                            ORDER BY rev DESC;  """))  # insert query here
         else:
-            cur.execute(("""SELECT sum (o.deal_amount_aftertax) as rev, c.customer_name, c.type, c.class
-                            FROM crm_opportunity o, crm_customer c  
-                            WHERE o.stage = 'Closed_Won' 
-                            AND o.customer_key = c.customer_key 
-                            GROUP BY c.type, c.class, c.customer_name
-                            ORDER BY rev DESC; """))  # insert query here
+            cur.execute(("""SELECT sum (o.deal_amount_aftertax) as rev, p.product_name, p.category, p.description
+                            FROM crm_opportunity o, crm_product p  
+                            WHERE o.stage = 'Closed_Won'  
+                            AND o.product_key = p.product_key 
+                            GROUP BY p.category, p.product_name, p.description
+                            ORDER BY rev DESC
+                            limit 10;  """))  # insert query here
         # point to existing session and modify
         session["sales_dow"] = cur.fetchall()  # fetches query and put into object
         session.modified = True
