@@ -131,17 +131,19 @@ def query_sales_dow():  # template for some query
                             GROUP BY c.type, c.class, c.customer_name
                             ORDER BY rev DESC; """))  # insert query here
         elif Month_choice == 'October':
-            cur.execute(("""SELECT d.weekday, sum(t.total_amount_paid) total_sales, sum(t.adult_amount_paid) adult_sales, sum(t.kid_amount_paid) kid_sales, sum(t.adult_seat + t.kid_seat) total_attendance, sum(t.adult_seat) adults_attendance, sum(t.kid_seat) kid_attendance
-            FROM transaction_fact t, date_dimension d
-            WHERE t.date_key = d.date_key and extract(month from d.date) = 10
-            GROUP BY d.weekday
-            ORDER BY total_sales DESC;"""))  # insert query here
+            cur.execute(("""SELECT sum (o.deal_amount_aftertax) as rev, c.customer_name, c.type, c.class
+                            FROM crm_opportunity o, crm_customer c  
+                            WHERE o.stage = 'Closed_Won' 
+                            AND o.customer_key = c.customer_key 
+                            GROUP BY c.type, c.class, c.customer_name
+                            ORDER BY rev DESC; """))  # insert query here
         else:
-            cur.execute(("""SELECT d.weekday, sum(t.total_amount_paid) total_sales, sum(t.adult_amount_paid) adult_sales, sum(t.kid_amount_paid) kid_sales, sum(t.adult_seat + t.kid_seat) total_attendance, sum(t.adult_seat) adults_attendance, sum(t.kid_seat) kid_attendance
-            FROM transaction_fact t, date_dimension d
-            WHERE t.date_key = d.date_key
-            GROUP BY d.weekday
-            ORDER BY total_sales DESC;"""))  # insert query here
+            cur.execute(("""SELECT sum (o.deal_amount_aftertax) as rev, c.customer_name, c.type, c.class
+                            FROM crm_opportunity o, crm_customer c  
+                            WHERE o.stage = 'Closed_Won' 
+                            AND o.customer_key = c.customer_key 
+                            GROUP BY c.type, c.class, c.customer_name
+                            ORDER BY rev DESC; """))  # insert query here
         # point to existing session and modify
         session["sales_dow"] = cur.fetchall()  # fetches query and put into object
         session.modified = True
@@ -149,11 +151,7 @@ def query_sales_dow():  # template for some query
         cur.close()  # closes query
         conn.close()  # closes connection to db
     return render_template('index.html', version=session["db_version"],
-                           sales_dow=session.get("sales_dow"),
-                           sales_by_film=session.get("sales_by_film"),
-                           film_roi=session.get("film_roi"),
-                           promo_roi=session.get("promo_roi"),
-                           pop_promo=session.get("pop_promo"))
+                           sales_dow=session.get("sales_dow"))
 
 
 # @app.route('/sales_by_film', methods=['POST'])
