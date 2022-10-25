@@ -131,13 +131,14 @@ def query_sales_dow():  # template for some query
                             GROUP BY c.type, c.class, c.customer_name
                             ORDER BY rev DESC
                             limit 10; """))  # insert query here
-        elif Month_choice == 'October':
-            cur.execute(("""SELECT sum (o.deal_amount_aftertax) as rev, c.customer_name, c.type, c.class
-                            FROM crm_opportunity o, crm_customer c  
+        elif Month_choice == 'User':
+            cur.execute(("""SELECT sum (o.deal_amount_aftertax) as rev, u.user_name, u.b_unit, u.title
+                            FROM crm_opportunity o, crm_user u  
                             WHERE o.stage = 'Closed_Won' 
-                            AND o.customer_key = c.customer_key 
-                            GROUP BY c.type, c.class, c.customer_name
-                            ORDER BY rev DESC;  """))  # insert query here
+                            AND o.user_key = u.user_key 
+                            GROUP BY u.user_name, u.b_unit, u.title
+                            ORDER BY rev DESC
+                            limit 10; """))  # insert query here
         else:
             cur.execute(("""SELECT sum (o.deal_amount_aftertax) as rev, p.product_name, p.category, p.description
                             FROM crm_opportunity o, crm_product p  
