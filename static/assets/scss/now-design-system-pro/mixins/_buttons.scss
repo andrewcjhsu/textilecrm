@@ -1,0 +1,15 @@
+@mixin btn-shadow-color($color) {
+  box-shadow: 0 .875rem 1.8125rem -.8125rem rgba($black, .30), 0 .875rem 1.8125rem -.8125rem rgba($color, .6);
+
+  &:active,
+  &:active:focus,
+  &:active:hover {
+    box-shadow: 0 .875rem 1.8125rem -.95rem rgba($black, .30), 0 .875rem 1.8125rem -.95rem rgba($color, .6);
+  }
+
+  @include hover {
+    &:not(.btn-icon-only){
+      box-shadow: 0 .875rem 1.8125rem -.95rem rgba($black, .30), 0 .875rem 1.8125rem -.95rem rgba($color, .6);
+    }
+  }
+}

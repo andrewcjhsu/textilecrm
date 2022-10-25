@@ -1,0 +1,41 @@
+{% extends 'index.html' %}
+
+{% block content %}
+    <h1>{% block title %} Query {% endblock %}</h1>
+    <form method="get">
+        <p>
+            <label for="start">Start Date</label>
+            <input type="date" name="begin"
+                   placeholder="YYYY-MM-DD" value=""
+                   min="2022-09-01" max="2022-12-31">
+            </input>
+            <label for="end">End Date</label>
+            <input type="date" name="begin"
+                   placeholder="YYYY-MM-DD" value=""
+                   min="2022-09-01" max="2022-12-31">
+            </input>
+        </p>
+
+        <p>
+            <label for="table">Select Table</label>
+            <select name="select table" id="table-names"
+            <option value="member_dimension">Member</option>
+            <option value="film_dimension">Film</option>
+            <option value="promotion_dimension">Promotion</option>
+        </select>
+        </p>
+        <p>
+            <label for="Total">Total of</label>
+            <select name="select total" id="total-names"
+            <option value="adult_seat">Adult Tickets</option>
+            <option value="adult_amount_paid">Adults Ticket Sales</option>
+            <option value="kid_seat">Children's Tickets</option>
+            <option value="kid_amount_paid">Children's Ticket Sales</option>
+            <option value="total_amount_paid">Total Ticket Sales</option>
+        </select>
+        </p>
+        <p>
+            <button type="submit">Submit</button>
+        </p>
+    </form>
+{% endblock %}
