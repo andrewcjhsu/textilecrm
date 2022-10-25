@@ -50,16 +50,18 @@ def hello_world():  # put application's code here
                     AND o.product_key = p.product_key 
                     GROUP BY p.category, p.product_name, p.description
                     ORDER BY rev DESC
-                    limit 10;  """)
+                    limit 10;""")
     session["sales_dow"] = cur.fetchall()
 
-#     # Sales and Attendance by Film Section Display
-#     cur.execute("""SELECT f.film_name, f.genre, sum(t.total_amount_paid) total_sales, sum(t.adult_amount_paid) adult_sales,
-#                     sum(t.kid_amount_paid) kid_sales, sum(t.adult_seat + t.kid_seat) total_attendance, sum(t.adult_seat) adults_attendance,
-#                     sum(t.kid_seat) kid_attendance FROM transaction_fact t, date_dimension d, film_dimension f
-#                     WHERE t.date_key = d.date_key AND t.film_key = f.film_key
-#                          GROUP BY f.film_name, f.genre ORDER BY total_sales DESC;""")
-#     session["sales_by_film"] = cur.fetchall()
+    # Sales and Attendance by Film Section Display
+    cur.execute("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, p.product_name, p.category, p.description
+                    FROM crm_opportunity o, crm_product p  
+                    WHERE o.stage = 'Closed_Won'  
+                    AND o.product_key = p.product_key 
+                    GROUP BY p.category, p.product_name, p.description
+                    ORDER BY rev desc
+                    limit 10;""")
+    session["sales_by_film"] = cur.fetchall()
 #
 #     # Return on Investment By Film Section Display
 #     cur.execute("""SELECT f.film_name, f.genre, sum(t.total_amount_paid) total_sales, max(f.procurement_cost) cost, (sum(t.total_amount_paid) - max(f.procurement_cost)) profit, ((sum(t.total_amount_paid) - max(f.procurement_cost))/max(f.procurement_cost)) ROI
@@ -99,8 +101,8 @@ def hello_world():  # put application's code here
     # close the communication with the PostgreSQL
     cur.close()
     return render_template('index.html', version=session["db_version"],
-                           sales_dow=session.get("sales_dow"))
-                           # sales_by_film=session.get("sales_by_film"),
+                           sales_dow=session.get("sales_dow"),
+                           sales_by_film=session.get("sales_by_film"))
                            # film_roi=session.get("film_roi"),
                            # promo_roi=session.get("promo_roi"),
                            # pop_promo=session.get("pop_promo"))
@@ -124,16 +126,16 @@ def query_sales_dow():  # template for some query
         conn = get_db_connection()
         cur = conn.cursor()
         if Month_choice == '2021':
-            cur.execute(("""SELECT sum (o.deal_amount_aftertax) as rev, c.customer_name, c.type, c.class
+            cur.execute(("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, c.customer_name, c.type, c.class
                             FROM crm_opportunity o, crm_customer c  
                             WHERE o.stage = 'Closed_Won' 
                             AND o.customer_key = c.customer_key 
-                            AND o.close_date <= '2022-01-01'
+                            AND o.close_date < '2022-01-01'
                             GROUP BY c.type, c.class, c.customer_name
                             ORDER BY rev DESC
                             limit 10;"""))  # insert query here
         elif Month_choice == '2022':
-            cur.execute(("""SELECT sum (o.deal_amount_aftertax) as rev, c.customer_name, c.type, c.class
+            cur.execute(("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, c.customer_name, c.type, c.class
                             FROM crm_opportunity o, crm_customer c  
                             WHERE o.stage = 'Closed_Won' 
                             AND o.customer_key = c.customer_key 
@@ -142,7 +144,7 @@ def query_sales_dow():  # template for some query
                             ORDER BY rev DESC
                             limit 10; """))  # insert query here
         else:
-            cur.execute(("""SELECT sum (o.deal_amount_aftertax) as rev, c.customer_name, c.type, c.class
+            cur.execute(("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, c.customer_name, c.type, c.class
                             FROM crm_opportunity o, crm_customer c  
                             WHERE o.stage = 'Closed_Won' 
                             AND o.customer_key = c.customer_key 
@@ -156,47 +158,52 @@ def query_sales_dow():  # template for some query
         cur.close()  # closes query
         conn.close()  # closes connection to db
     return render_template('index.html', version=session["db_version"],
-                           sales_dow=session.get("sales_dow"))
+                           sales_dow=session.get("sales_dow"),
+                           sales_by_film=session.get("sales_by_film")
+                           )
 
 
-# @app.route('/sales_by_film', methods=['POST'])
-# def query_sales_by_film():  # template for some query
-#     if request.method == 'POST':
-#         Month_choice = request.form['table-choice']
-#         conn = get_db_connection()
-#         cur = conn.cursor()
-#         if Month_choice == 'September':
-#             cur.execute(("""
-#                          SELECT f.film_name, f.genre, sum(t.total_amount_paid) total_sales, sum(t.adult_amount_paid) adult_sales,
-#                          sum(t.kid_amount_paid) kid_sales, sum(t.adult_seat + t.kid_seat) total_attendance, sum(t.adult_seat) adults_attendance,
-#                          sum(t.kid_seat) kid_attendance FROM transaction_fact t, date_dimension d, film_dimension f
-#                          WHERE t.date_key = d.date_key AND extract(month from d.date) = 9 AND t.film_key = f.film_key
-#                          GROUP BY f.film_name, f.genre ORDER BY total_sales DESC;"""))  # insert query here
-#         elif Month_choice == 'October':
-#             cur.execute(("""SELECT f.film_name, f.genre, sum(t.total_amount_paid) total_sales, sum(t.adult_amount_paid) adult_sales,
-#                          sum(t.kid_amount_paid) kid_sales, sum(t.adult_seat + t.kid_seat) total_attendance,
-#                          sum(t.adult_seat) adults_attendance, sum(t.kid_seat) kid_attendance
-#                          FROM transaction_fact t, date_dimension d, film_dimension f WHERE t.date_key = d.date_key
-#                          AND extract(month from d.date) = 10 AND t.film_key = f.film_key GROUP BY f.film_name, f.genre
-#                          ORDER BY total_sales DESC;"""))  # insert query here
-#         else:
-#             cur.execute(("""SELECT f.film_name, f.genre, sum(t.total_amount_paid) total_sales, sum(t.adult_amount_paid) adult_sales,
-#                          sum(t.kid_amount_paid) kid_sales, sum(t.adult_seat + t.kid_seat) total_attendance,
-#                          sum(t.adult_seat) adults_attendance, sum(t.kid_seat) kid_attendance
-#                          FROM transaction_fact t, date_dimension d, film_dimension f WHERE t.date_key = d.date_key
-#                          AND t.film_key = f.film_key GROUP BY f.film_name, f.genre ORDER BY total_sales DESC;"""))  # insert query here
-#         # point to existing session and modify
-#         session["sales_by_film"] = cur.fetchall()  # fetches query and put into object
-#         session.modified = True
-#         cur.close()  # closes query
-#         conn.close()  # closes connection to db
-#     return render_template('index.html', version=session["db_version"],
-#                            sales_dow=session.get("sales_dow"),
-#                            sales_by_film=session.get("sales_by_film"),
-#                            film_roi=session.get("film_roi"),
-#                            promo_roi=session.get("promo_roi"),
-#                            pop_promo=session.get("pop_promo"))
-#
+@app.route('/sales_by_film', methods=['POST'])
+def query_sales_by_film():  # template for some query
+    if request.method == 'POST':
+        Month_choice = request.form['table-choice']
+        conn = get_db_connection()
+        cur = conn.cursor()
+        if Month_choice == '2021':
+            cur.execute(("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, p.product_name, p.category, p.description
+                            FROM crm_opportunity o, crm_product p  
+                            WHERE o.stage = 'Closed_Won'  
+                            AND o.product_key = p.product_key 
+                            AND o.close_date < '2022-01-01'
+                            GROUP BY p.category, p.product_name, p.description
+                            ORDER BY rev desc
+                            limit 10;"""))  # insert query here
+        elif Month_choice == '2022':
+            cur.execute(("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, p.product_name, p.category, p.description
+                            FROM crm_opportunity o, crm_product p  
+                            WHERE o.stage = 'Closed_Won'  
+                            AND o.product_key = p.product_key 
+                            AND o.close_date >= '2022-01-01'
+                            GROUP BY p.category, p.product_name, p.description
+                            ORDER BY rev desc
+                            limit 10;"""))  # insert query here
+        else:
+            cur.execute(("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, p.product_name, p.category, p.description
+                            FROM crm_opportunity o, crm_product p  
+                            WHERE o.stage = 'Closed_Won'  
+                            AND o.product_key = p.product_key 
+                            GROUP BY p.category, p.product_name, p.description
+                            ORDER BY rev desc
+                            limit 10;"""))  # insert query here
+        # point to existing session and modify
+        session["sales_by_film"] = cur.fetchall()  # fetches query and put into object
+        session.modified = True
+        cur.close()  # closes query
+        conn.close()  # closes connection to db
+    return render_template('index.html', version=session["db_version"],
+                           sales_dow=session.get("sales_dow"),
+                           sales_by_film=session.get("sales_by_film"))
+
 #
 # @app.route('/promo_roi', methods=['POST'])
 # def query_promo_roi():  # template for some query
