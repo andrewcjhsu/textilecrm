@@ -49,7 +49,7 @@ def hello_world():  # put application's code here
                     WHERE o.stage = 'Closed_Won'  
                     AND o.product_key = p.product_key 
                     GROUP BY p.category, p.product_name, p.description
-                    ORDER BY rev
+                    ORDER BY rev DESC
                     limit 10;  """)
     session["sales_dow"] = cur.fetchall()
 
@@ -124,11 +124,12 @@ def query_sales_dow():  # template for some query
         conn = get_db_connection()
         cur = conn.cursor()
         if Month_choice == 'September':
-            cur.execute(("""SELECT d.weekday, sum(t.total_amount_paid) total_sales, sum(t.adult_amount_paid) adult_sales, sum(t.kid_amount_paid) kid_sales, sum(t.adult_seat + t.kid_seat) total_attendance, sum(t.adult_seat) adults_attendance, sum(t.kid_seat) kid_attendance
-            FROM transaction_fact t, date_dimension d
-            WHERE t.date_key = d.date_key and extract(month from d.date) = 9
-            GROUP BY d.weekday
-            ORDER BY total_sales DESC;"""))  # insert query here
+            cur.execute(("""SELECT sum (o.deal_amount_aftertax) as rev, c.customer_name, c.type, c.class
+                            FROM crm_opportunity o, crm_customer c  
+                            WHERE o.stage = 'Closed_Won' 
+                            AND o.customer_key = c.customer_key 
+                            GROUP BY c.type, c.class, c.customer_name
+                            ORDER BY rev DESC; """))  # insert query here
         elif Month_choice == 'October':
             cur.execute(("""SELECT d.weekday, sum(t.total_amount_paid) total_sales, sum(t.adult_amount_paid) adult_sales, sum(t.kid_amount_paid) kid_sales, sum(t.adult_seat + t.kid_seat) total_attendance, sum(t.adult_seat) adults_attendance, sum(t.kid_seat) kid_attendance
             FROM transaction_fact t, date_dimension d
