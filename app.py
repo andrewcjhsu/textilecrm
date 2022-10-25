@@ -159,7 +159,7 @@ def query_sales_dow():  # template for some query
         conn.close()  # closes connection to db
     return render_template('index.html', version=session["db_version"],
                            sales_dow=session.get("sales_dow"),
-                           sales_by_film=session.get("sales_by_film")
+                           sales_by_film=session.get("sales_by_film"))
 
 
 @app.route('/sales_by_film', methods=['POST'])
