@@ -101,7 +101,7 @@ def hello_world():  # put application's code here
     # close the communication with the PostgreSQL
     cur.close()
     return render_template('index.html', version=session["db_version"],
-                           sales_dow=session.get("sales_dow")),
+                           sales_dow=session.get("sales_dow"),
                            sales_by_film=session.get("sales_by_film"))
                            # film_roi=session.get("film_roi"),
                            # promo_roi=session.get("promo_roi"),
