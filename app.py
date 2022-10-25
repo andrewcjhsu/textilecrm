@@ -158,50 +158,50 @@ def query_sales_dow():  # template for some query
         cur.close()  # closes query
         conn.close()  # closes connection to db
     return render_template('index.html', version=session["db_version"],
-                           sales_dow=session.get("sales_dow")
-                           )
+                           sales_dow=session.get("sales_dow"),
+                           sales_by_film=session.get("sales_by_film")
 
 
-# @app.route('/sales_by_film', methods=['POST'])
-# def query_sales_by_film():  # template for some query
-#     if request.method == 'POST':
-#         Month_choice = request.form['table-choice']
-#         conn = get_db_connection()
-#         cur = conn.cursor()
-#         if Month_choice == '2021':
-#             cur.execute(("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, p.product_name, p.category, p.description
-#                             FROM crm_opportunity o, crm_product p
-#                             WHERE o.stage = 'Closed_Won'
-#                             AND o.product_key = p.product_key
-#                             AND o.close_date < '2022-01-01'
-#                             GROUP BY p.category, p.product_name, p.description
-#                             ORDER BY rev desc
-#                             limit 10;"""))  # insert query here
-#         elif Month_choice == '2022':
-#             cur.execute(("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, p.product_name, p.category, p.description
-#                             FROM crm_opportunity o, crm_product p
-#                             WHERE o.stage = 'Closed_Won'
-#                             AND o.product_key = p.product_key
-#                             AND o.close_date >= '2022-01-01'
-#                             GROUP BY p.category, p.product_name, p.description
-#                             ORDER BY rev desc
-#                             limit 10;"""))  # insert query here
-#         else:
-#             cur.execute(("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, p.product_name, p.category, p.description
-#                             FROM crm_opportunity o, crm_product p
-#                             WHERE o.stage = 'Closed_Won'
-#                             AND o.product_key = p.product_key
-#                             GROUP BY p.category, p.product_name, p.description
-#                             ORDER BY rev desc
-#                             limit 10;"""))  # insert query here
-#         # point to existing session and modify
-#         session["sales_by_film"] = cur.fetchall()  # fetches query and put into object
-#         session.modified = True
-#         cur.close()  # closes query
-#         conn.close()  # closes connection to db
-#     return render_template('index.html', version=session["db_version"],
-#                            sales_dow=session.get("sales_dow"),
-#                            sales_by_film=session.get("sales_by_film"))
+@app.route('/sales_by_film', methods=['POST'])
+def query_sales_by_film():  # template for some query
+    if request.method == 'POST':
+        Month_choice = request.form['table-choice']
+        conn = get_db_connection()
+        cur = conn.cursor()
+        if Month_choice == '2021':
+            cur.execute(("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, p.product_name, p.category, p.description
+                            FROM crm_opportunity o, crm_product p
+                            WHERE o.stage = 'Closed_Won'
+                            AND o.product_key = p.product_key
+                            AND o.close_date < '2022-01-01'
+                            GROUP BY p.category, p.product_name, p.description
+                            ORDER BY rev desc
+                            limit 10;"""))  # insert query here
+        elif Month_choice == '2022':
+            cur.execute(("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, p.product_name, p.category, p.description
+                            FROM crm_opportunity o, crm_product p
+                            WHERE o.stage = 'Closed_Won'
+                            AND o.product_key = p.product_key
+                            AND o.close_date >= '2022-01-01'
+                            GROUP BY p.category, p.product_name, p.description
+                            ORDER BY rev desc
+                            limit 10;"""))  # insert query here
+        else:
+            cur.execute(("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, p.product_name, p.category, p.description
+                            FROM crm_opportunity o, crm_product p
+                            WHERE o.stage = 'Closed_Won'
+                            AND o.product_key = p.product_key
+                            GROUP BY p.category, p.product_name, p.description
+                            ORDER BY rev desc
+                            limit 10;"""))  # insert query here
+        # point to existing session and modify
+        session["sales_by_film"] = cur.fetchall()  # fetches query and put into object
+        session.modified = True
+        cur.close()  # closes query
+        conn.close()  # closes connection to db
+    return render_template('index.html', version=session["db_version"],
+                           sales_dow=session.get("sales_dow"),
+                           sales_by_film=session.get("sales_by_film"))
 
 #
 # @app.route('/promo_roi', methods=['POST'])
