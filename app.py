@@ -95,14 +95,14 @@ def hello_world():  # put application's code here
 #                             ORDER BY m1.age, m1.gender DESC;""")
 #     session["pop_promo"] = cur.fetchall()
 #
-#     # close the communication with the PostgreSQL
-#     cur.close()
-#     return render_template('index.html', version=session["db_version"],
-#                            sales_dow=session.get("sales_dow"),
-#                            sales_by_film=session.get("sales_by_film"),
-#                            film_roi=session.get("film_roi"),
-#                            promo_roi=session.get("promo_roi"),
-#                            pop_promo=session.get("pop_promo"))
+    # close the communication with the PostgreSQL
+    cur.close()
+    return render_template('index.html', version=session["db_version"],
+                           sales_dow=session.get("sales_dow"))
+                           # sales_by_film=session.get("sales_by_film"),
+                           # film_roi=session.get("film_roi"),
+                           # promo_roi=session.get("promo_roi"),
+                           # pop_promo=session.get("pop_promo"))
 #
 #
 # # def index():
