@@ -153,8 +153,8 @@ def query_sales_dow():  # template for some query
     return render_template('index.html', version=session["db_version"],
                            sales_dow=session.get("sales_dow"),
                            sales_by_film=session.get("sales_by_film"),
-                           promo_roi=session.get("promo_roi")
-                           )
+                           promo_roi=session.get("promo_roi"),
+                           pop_promo=session.get("pop_promo"))
 
 
 @app.route('/sales_by_film', methods=['POST'])
@@ -195,7 +195,7 @@ def query_sales_by_film():  # template for some query
                            sales_dow=session.get("sales_dow"),
                            sales_by_film=session.get("sales_by_film"),
                            promo_roi=session.get("promo_roi"),
-                           )
+                           pop_promo=session.get("pop_promo"))
 
 
 @app.route('/promo_roi', methods=['POST'])
@@ -245,83 +245,53 @@ def query_promo_roi():  # template for some query
     return render_template('index.html', version=session["db_version"],
                            sales_dow=session.get("sales_dow"),
                            sales_by_film=session.get("sales_by_film"),
-                           # film_roi=session.get("film_roi"),
-                           promo_roi=session.get("promo_roi"))
+                           promo_roi=session.get("promo_roi"),
+                           pop_promo=session.get("pop_promo"))
 
 #
-# @app.route('/pop_promo', methods=['POST'])
-# def query_pop_promo():  # template for some query
-#     if request.method == 'POST':
-#         Month_choice = request.form['table-choice']
-#         conn = get_db_connection()
-#         cur = conn.cursor()
-#         if Month_choice == 'September':
-#             cur.execute(("""SELECT m1.age, m1.gender,p1.planner,p1.promotion_name, count(*) total_redemption
-#                             FROM transaction_fact t1, date_dimension d1, promotion_dimension p1, member_dimension m1
-#                             WHERE t1.date_key = d1.date_key
-#                             AND extract(month from d1.date) = 9
-#                             AND t1.promotion_key = p1.promotion_key
-#                             AND t1.member_key = m1.member_key
-#                             GROUP BY p1.planner, p1.promotion_name, m1.age, m1.gender
-#                             HAVING count(*) >=ALL(
-#                                 SELECT count(*)
-#                                 FROM transaction_fact t2, date_dimension d2, promotion_dimension p2, member_dimension m2
-#                                 WHERE t2.date_key = d2.date_key
-#                                 AND extract(month from d2.date) = 9
-#                                 AND t2.promotion_key = p2.promotion_key
-#                                 AND t2.member_key = m2.member_key
-#                                 AND m1.age = m2.age
-#                                 AND m1.gender = m2.gender
-#                                 GROUP BY p2.planner, p2.promotion_name, m2.age, m2.gender)
-#                             ORDER BY m1.age, m1.gender DESC;"""))  # insert query here
-#         elif Month_choice == 'October':
-#             cur.execute(("""SELECT m1.age, m1.gender,p1.planner,p1.promotion_name, count(*) total_redemption
-#                             FROM transaction_fact t1, date_dimension d1, promotion_dimension p1, member_dimension m1
-#                             WHERE t1.date_key = d1.date_key
-#                             AND extract(month from d1.date) = 10
-#                             AND t1.promotion_key = p1.promotion_key
-#                             AND t1.member_key = m1.member_key
-#                             GROUP BY p1.planner, p1.promotion_name, m1.age, m1.gender
-#                             HAVING count(*) >=ALL(
-#                                 SELECT count(*)
-#                                 FROM transaction_fact t2, date_dimension d2, promotion_dimension p2, member_dimension m2
-#                                 WHERE t2.date_key = d2.date_key
-#                                 AND extract(month from d2.date) = 10
-#                                 AND t2.promotion_key = p2.promotion_key
-#                                 AND t2.member_key = m2.member_key
-#                                 AND m1.age = m2.age
-#                                 AND m1.gender = m2.gender
-#                                 GROUP BY p2.planner, p2.promotion_name, m2.age, m2.gender)
-#                             ORDER BY m1.age, m1.gender DESC;"""))  # insert query here
-#         else:
-#             cur.execute(("""SELECT m1.age, m1.gender,p1.planner,p1.promotion_name, count(*) total_redemption
-#                             FROM transaction_fact t1, date_dimension d1, promotion_dimension p1, member_dimension m1
-#                             WHERE t1.date_key = d1.date_key
-#                             AND t1.promotion_key = p1.promotion_key
-#                             AND t1.member_key = m1.member_key
-#                             GROUP BY p1.planner, p1.promotion_name, m1.age, m1.gender
-#                             HAVING count(*) >=ALL(
-#                                 SELECT count(*)
-#                                 FROM transaction_fact t2, date_dimension d2, promotion_dimension p2, member_dimension m2
-#                                 WHERE t2.date_key = d2.date_key
-#                                 AND t2.promotion_key = p2.promotion_key
-#                                 AND t2.member_key = m2.member_key
-#                                 AND m1.age = m2.age
-#                                 AND m1.gender = m2.gender
-#                                 GROUP BY p2.planner, p2.promotion_name, m2.age, m2.gender)
-#                             ORDER BY m1.age, m1.gender DESC;"""))  # insert query here
-#         # point to existing session and modify
-#         session["pop_promo"] = cur.fetchall()  # fetches query and put into object
-#         session.modified = True
-#         cur.close()  # closes query
-#         conn.close()  # closes connection to db
-#     return render_template('index.html', version=session["db_version"],
-#                            sales_dow=session.get("sales_dow"),
-#                            sales_by_film=session.get("sales_by_film"),
-#                            film_roi=session.get("film_roi"),
-#                            promo_roi=session.get("promo_roi"),
-#                            pop_promo=session.get("pop_promo"))
-#
+@app.route('/pop_promo', methods=['POST'])
+def query_pop_promo():  # template for some query
+    if request.method == 'POST':
+        Month_choice = request.form['table-choice']
+        conn = get_db_connection()
+        cur = conn.cursor()
+        if Month_choice == '2021':
+            cur.execute(("""SELECT round(SUM(o.deal_amount_aftertax/c.cost),0) as profit,  c.cost, c.campaign_name, c.type
+                            FROM crm_opportunity o, crm_campaign c 
+                            WHERE o.stage = 'Closed_Won'  
+                            AND o.campaign_key = c.campaign_key 
+                            AND c.date < '2022-01-01'
+                            Group BY c.campaign_name, c.type, c.cost
+                            ORDER BY profit DESC
+                            limit 10;"""))  # insert query here
+        elif Month_choice == '2022':
+            cur.execute(("""SELECT round(SUM(o.deal_amount_aftertax/c.cost),0) as profit,  c.cost, c.campaign_name, c.type
+                            FROM crm_opportunity o, crm_campaign c 
+                            WHERE o.stage = 'Closed_Won'  
+                            AND o.campaign_key = c.campaign_key 
+                            AND c.date >= '2022-01-01'
+                            Group BY c.campaign_name, c.type, c.cost
+                            ORDER BY profit DESC
+                            limit 10;"""))  # insert query here
+        else:
+            cur.execute(("""SELECT round(SUM(o.deal_amount_aftertax/c.cost),0) as profit,  c.cost, c.campaign_name, c.type
+                            FROM crm_opportunity o, crm_campaign c 
+                            WHERE o.stage = 'Closed_Won'  
+                            AND o.campaign_key = c.campaign_key 
+                            Group BY c.campaign_name, c.type, c.cost
+                            ORDER BY profit DESC
+                            limit 10;"""))  # insert query here
+        # point to existing session and modify
+        session["pop_promo"] = cur.fetchall()  # fetches query and put into object
+        session.modified = True
+        cur.close()  # closes query
+        conn.close()  # closes connection to db
+    return render_template('index.html', version=session["db_version"],
+                           sales_dow=session.get("sales_dow"),
+                           sales_by_film=session.get("sales_by_film"),
+                           promo_roi=session.get("promo_roi"),
+                           pop_promo=session.get("pop_promo"))
+
 #
 if __name__ == '__main__':
     app.run()
