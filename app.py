@@ -45,43 +45,50 @@ def hello_world():  # put application's code here
     session["db_version"] = cur.fetchone()[0]
     # Top 10 Historical Sales by customers
     cur.execute("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, c.customer_name, c.type, c.class
-                    FROM crm_opportunity o, crm_customer c  
-                    WHERE o.stage = 'Closed_Won' 
-                    AND o.customer_key = c.customer_key 
+                    FROM crm_opportunity o, crm_customer c   
+                    WHERE o.customer_key = c.customer_key 
                     GROUP BY c.type, c.class, c.customer_name
                     ORDER BY rev DESC
                     limit 10;""")
     session["customer_sales"] = cur.fetchall()
 
-    # Top 10 Historical sales by product
+    # Top Sales of Product by each category
     cur.execute("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, p.product_name, p.category, p.description
                     FROM crm_opportunity o, crm_product p  
-                    WHERE o.stage = 'Closed_Won'  
-                    AND o.product_key = p.product_key 
-                    GROUP BY p.category, p.product_name, p.description
-                    ORDER BY rev desc
-                    limit 10;""")
+                    WHERE o.product_key = p.product_key 
+                    GROUP by p.product_name, p.category, p.description
+                    HAVING sum (o.deal_amount_aftertax) >= ALL
+	                (select sum (o1.deal_amount_aftertax)
+	                    FROM crm_opportunity o1, crm_product p1
+	                    WHERE o1.product_key = p1.product_key
+	                    AND p.category = p1.category
+	                    GROUP by p1.product_name)
+                    ORDER BY rev DESC;""")
     session["product_sales"] = cur.fetchall()
 
 
     # Top 10 Predictive Sales by users
-    cur.execute("""SELECT round(sum (o.deal_amount_aftertax * o.win_rate/100),0) as rev, u.user_name, u.b_unit,u.title
+    cur.execute("""SELECT round(avg (o.deal_amount_aftertax),0) as rev, u.user_name, u.b_unit,u.title
                         FROM crm_opportunity o, crm_user u
                         WHERE o.user_key = u.user_key
-                        AND o.stage != 'Closed_Won'
                         Group BY u.b_unit, u.title, u.user_name
                         ORDER BY rev DESC
                         limit 10;""")
     session["predictive_sales"] = cur.fetchall()
 #
-#     # Top 10 Profitable Campaign / Marketing
+#     # Most Profitable Campaign of each type
     cur.execute("""SELECT round(SUM(o.deal_amount_aftertax/c.cost),0) as profit,  c.cost, c.campaign_name, c.type
                     FROM crm_opportunity o, crm_campaign c 
-                    WHERE o.stage = 'Closed_Won'  
-                    AND o.campaign_key = c.campaign_key 
+                    WHERE o.campaign_key = c.campaign_key 
                     Group BY c.campaign_name, c.type, c.cost
-                    ORDER BY profit DESC
-                    limit 10;""")
+					HAVING SUM(o.deal_amount_aftertax/c.cost) >= ALL (
+						SELECT SUM(o1.deal_amount_aftertax/c1.cost)
+						FROM crm_opportunity o1, crm_campaign c1 
+                    	WHERE o1.campaign_key = c1.campaign_key 
+						AND c.type = c1.type
+						GROUP BY c1.campaign_name
+					)
+					ORDER BY profit desc;""")
     session["campaign_roi"] = cur.fetchall()
 #
     # close the communication with the PostgreSQL
