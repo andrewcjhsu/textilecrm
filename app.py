@@ -43,7 +43,7 @@ def hello_world():  # put application's code here
     cur.execute('SELECT version()')
     # display the PostgreSQL database server version
     session["db_version"] = cur.fetchone()[0]
-    # Top 10 Historical Sales by customers
+    # Top 10 Sales by customers
     cur.execute("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, c.customer_name, c.type, c.class
                     FROM crm_opportunity o, crm_customer c   
                     WHERE o.customer_key = c.customer_key 
@@ -52,7 +52,7 @@ def hello_world():  # put application's code here
                     limit 10;""")
     session["customer_sales"] = cur.fetchall()
 
-    # Top Sales of Product by each category
+    # Top Sales by each product category
     cur.execute("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, p.product_name, p.category, p.description
                     FROM crm_opportunity o, crm_product p  
                     WHERE o.product_key = p.product_key 
@@ -67,11 +67,11 @@ def hello_world():  # put application's code here
     session["product_sales"] = cur.fetchall()
 
 
-    # Top 10 Predictive Sales by users
-    cur.execute("""SELECT round(avg (o.deal_amount_aftertax),0) as rev, u.user_name, u.b_unit,u.title
+    # Average Sales by Users b_unit and title
+    cur.execute("""SELECT round(avg (o.deal_amount_aftertax),0) as rev, u.b_unit,u.title
                         FROM crm_opportunity o, crm_user u
                         WHERE o.user_key = u.user_key
-                        Group BY u.b_unit, u.title, u.user_name
+                        Group BY u.b_unit, u.title
                         ORDER BY rev DESC
                         limit 10;""")
     session["predictive_sales"] = cur.fetchall()
@@ -105,29 +105,46 @@ def query_customer_sales():  # template for some query
         print(Month_choice)
         conn = get_db_connection()
         cur = conn.cursor()
-        if Month_choice == '2021':
+        if Month_choice == 'Q1':
             cur.execute(("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, c.customer_name, c.type, c.class
-                            FROM crm_opportunity o, crm_customer c  
-                            WHERE o.stage = 'Closed_Won' 
-                            AND o.customer_key = c.customer_key 
-                            AND o.close_date < '2022-01-01'
+                            FROM crm_opportunity o, crm_customer c, crm_update d 
+                            WHERE o.customer_key = c.customer_key 
+							AND o.date_key = d.date_key 
+							AND d.quarter = '1'
                             GROUP BY c.type, c.class, c.customer_name
                             ORDER BY rev DESC
                             limit 10;"""))  # insert query here
-        elif Month_choice == '2022':
+        elif Month_choice == 'Q2':
             cur.execute(("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, c.customer_name, c.type, c.class
-                            FROM crm_opportunity o, crm_customer c  
-                            WHERE o.stage = 'Closed_Won' 
-                            AND o.customer_key = c.customer_key 
-                            AND o.close_date >= '2022-01-01'
+                            FROM crm_opportunity o, crm_customer c, crm_update d 
+                            WHERE o.customer_key = c.customer_key 
+							AND o.date_key = d.date_key 
+							AND d.quarter = '2'
                             GROUP BY c.type, c.class, c.customer_name
                             ORDER BY rev DESC
-                            limit 10; """))  # insert query here
+                            limit 10;"""))
+        elif Month_choice == 'Q3':
+            cur.execute(("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, c.customer_name, c.type, c.class
+                            FROM crm_opportunity o, crm_customer c, crm_update d 
+                            WHERE o.customer_key = c.customer_key 
+							AND o.date_key = d.date_key 
+							AND d.quarter = '3'
+                            GROUP BY c.type, c.class, c.customer_name
+                            ORDER BY rev DESC
+                            limit 10;"""))
+        elif Month_choice == 'Q4':
+            cur.execute(("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, c.customer_name, c.type, c.class
+                            FROM crm_opportunity o, crm_customer c, crm_update d 
+                            WHERE o.customer_key = c.customer_key 
+							AND o.date_key = d.date_key 
+							AND d.quarter = '4'
+                            GROUP BY c.type, c.class, c.customer_name
+                            ORDER BY rev DESC
+                            limit 10;"""))  # insert query here
         else:
             cur.execute(("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, c.customer_name, c.type, c.class
-                            FROM crm_opportunity o, crm_customer c  
-                            WHERE o.stage = 'Closed_Won' 
-                            AND o.customer_key = c.customer_key 
+                            FROM crm_opportunity o, crm_customer c   
+                            WHERE o.customer_key = c.customer_key 
                             GROUP BY c.type, c.class, c.customer_name
                             ORDER BY rev DESC
                             limit 10; """))  # insert query here
