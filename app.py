@@ -78,7 +78,8 @@ def hello_world():  # put application's code here
                         WHERE o.user_key = u.user_key
                         AND o.stage != 'Closed_Won'
                         Group BY u.b_unit, u.title, u.user_name
-                        ORDER BY rev DESC;""")
+                        ORDER BY rev DESC
+                        limit 10;""")
     session["promo_roi"] = cur.fetchall()
 #
 #     # Most popular promotion by member’s age and gender
