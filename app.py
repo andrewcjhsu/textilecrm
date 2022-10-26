@@ -206,56 +206,56 @@ def query_sales_by_film():  # template for some query
                            promo_roi=session.get("promo_roi"))
 
 
-@app.route('/promo_roi', methods=['POST'])
-def query_promo_roi():  # template for some query
-    if request.method == 'POST':
-        Month_choice = request.form['table-choice']
-        conn = get_db_connection()
-        cur = conn.cursor()
-        if Month_choice == '2021':
-            cur.execute(("""SELECT round(sum (o.deal_amount_aftertax * o.win_rate/100),0) as rev, u.user_name, u.b_unit,u.title
-                            FROM crm_opportunity o, crm_user u  
-                            WHERE o.user_key = u.user_key 
-                            AND o.stage != 'Closed_Won'
-                            AND o.create_date < '2022-04-01'
-                            Group BY u.b_unit, u.title, u.user_name
-                            ORDER BY rev DESC;"""))  # insert query here
-        elif Month_choice == '2022Q1':
-            cur.execute(("""SELECT round(sum (o.deal_amount_aftertax * o.win_rate/100),0) as rev, u.user_name, u.b_unit,u.title
-                            FROM crm_opportunity o, crm_user u  
-                            WHERE o.user_key = u.user_key 
-                            AND o.stage != 'Closed_Won'
-                            AND o.create_date < '2022-04-01'
-                            AND o.create_date >= '2022-01-01'
-                            Group BY u.b_unit, u.title, u.user_name
-                            ORDER BY rev DESC;"""))
-        elif Month_choice == '2022Q2':
-            cur.execute(("""SELECT round(sum (o.deal_amount_aftertax * o.win_rate/100),0) as rev, u.user_name, u.b_unit,u.title
-                            FROM crm_opportunity o, crm_user u  
-                            WHERE o.user_key = u.user_key 
-                            AND o.stage != 'Closed_Won'
-                            AND o.create_date >= '2022-04-01'
-                            AND o.create_date < '2022-07-01'
-                            Group BY u.b_unit, u.title, u.user_name
-                            ORDER BY rev DESC;"""))  # insert query here
-        else:
-            cur.execute(("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, u.user_name, u.b_unit,u.title
-                            FROM crm_opportunity o, crm_user u  
-                            WHERE o.user_key = u.user_key 
-                            AND o.stage != 'Closed_Won'
-                            Group BY u.b_unit, u.title, u.user_name
-                            ORDER BY rev DESC;"""))  # insert query here
-        # point to existing session and modify
-        session["promo_roi"] = cur.fetchall()  # fetches query and put into object
-        session.modified = True
-        cur.close()  # closes query
-        conn.close()  # closes connection to db
-    return render_template('index.html', version=session["db_version"],
-                           sales_dow=session.get("sales_dow"),
-                           sales_by_film=session.get("sales_by_film"),
-                           # film_roi=session.get("film_roi"),
-                           promo_roi=session.get("promo_roi"))
-                           # pop_promo=session.get("pop_promo"))
+# @app.route('/promo_roi', methods=['POST'])
+# def query_promo_roi():  # template for some query
+#     if request.method == 'POST':
+#         Month_choice = request.form['table-choice']
+#         conn = get_db_connection()
+#         cur = conn.cursor()
+#         if Month_choice == '2021':
+#             cur.execute(("""SELECT round(sum (o.deal_amount_aftertax * o.win_rate/100),0) as rev, u.user_name, u.b_unit,u.title
+#                             FROM crm_opportunity o, crm_user u
+#                             WHERE o.user_key = u.user_key
+#                             AND o.stage != 'Closed_Won'
+#                             AND o.create_date < '2022-04-01'
+#                             Group BY u.b_unit, u.title, u.user_name
+#                             ORDER BY rev DESC;"""))  # insert query here
+#         elif Month_choice == '2022Q1':
+#             cur.execute(("""SELECT round(sum (o.deal_amount_aftertax * o.win_rate/100),0) as rev, u.user_name, u.b_unit,u.title
+#                             FROM crm_opportunity o, crm_user u
+#                             WHERE o.user_key = u.user_key
+#                             AND o.stage != 'Closed_Won'
+#                             AND o.create_date < '2022-04-01'
+#                             AND o.create_date >= '2022-01-01'
+#                             Group BY u.b_unit, u.title, u.user_name
+#                             ORDER BY rev DESC;"""))
+#         elif Month_choice == '2022Q2':
+#             cur.execute(("""SELECT round(sum (o.deal_amount_aftertax * o.win_rate/100),0) as rev, u.user_name, u.b_unit,u.title
+#                             FROM crm_opportunity o, crm_user u
+#                             WHERE o.user_key = u.user_key
+#                             AND o.stage != 'Closed_Won'
+#                             AND o.create_date >= '2022-04-01'
+#                             AND o.create_date < '2022-07-01'
+#                             Group BY u.b_unit, u.title, u.user_name
+#                             ORDER BY rev DESC;"""))  # insert query here
+#         else:
+#             cur.execute(("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, u.user_name, u.b_unit,u.title
+#                             FROM crm_opportunity o, crm_user u
+#                             WHERE o.user_key = u.user_key
+#                             AND o.stage != 'Closed_Won'
+#                             Group BY u.b_unit, u.title, u.user_name
+#                             ORDER BY rev DESC;"""))  # insert query here
+#         # point to existing session and modify
+#         session["promo_roi"] = cur.fetchall()  # fetches query and put into object
+#         session.modified = True
+#         cur.close()  # closes query
+#         conn.close()  # closes connection to db
+#     return render_template('index.html', version=session["db_version"],
+#                            sales_dow=session.get("sales_dow"),
+#                            sales_by_film=session.get("sales_by_film"),
+#                            # film_roi=session.get("film_roi"),
+#                            promo_roi=session.get("promo_roi"))
+#                            # pop_promo=session.get("pop_promo"))
 
 #
 # @app.route('/pop_promo', methods=['POST'])
