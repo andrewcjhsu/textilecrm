@@ -314,49 +314,71 @@ def query_predictive_sales():  # template for some query
                            predictive_sales=session.get("predictive_sales"),
                            campaign_roi=session.get("campaign_roi"))
 
-# #
-# @app.route('/campaign_roi', methods=['POST'])
-# def query_campaign_roi():  # template for some query
-#     if request.method == 'POST':
-#         Month_choice = request.form['table-choice']
-#         conn = get_db_connection()
-#         cur = conn.cursor()
-#         if Month_choice == '2021':
-#             cur.execute(("""SELECT round(SUM(o.deal_amount_aftertax/c.cost),0) as profit,  c.cost, c.campaign_name, c.type
-#                             FROM crm_opportunity o, crm_campaign c
-#                             WHERE o.stage = 'Closed_Won'
-#                             AND o.campaign_key = c.campaign_key
-#                             AND c.date < '2022-01-01'
-#                             Group BY c.campaign_name, c.type, c.cost
-#                             ORDER BY profit DESC
-#                             limit 10;"""))  # insert query here
-#         elif Month_choice == '2022':
-#             cur.execute(("""SELECT round(SUM(o.deal_amount_aftertax/c.cost),0) as profit,  c.cost, c.campaign_name, c.type
-#                             FROM crm_opportunity o, crm_campaign c
-#                             WHERE o.stage = 'Closed_Won'
-#                             AND o.campaign_key = c.campaign_key
-#                             AND c.date >= '2022-01-01'
-#                             Group BY c.campaign_name, c.type, c.cost
-#                             ORDER BY profit DESC
-#                             limit 10;"""))  # insert query here
-#         else:
-#             cur.execute(("""SELECT round(SUM(o.deal_amount_aftertax/c.cost),0) as profit,  c.cost, c.campaign_name, c.type
-#                             FROM crm_opportunity o, crm_campaign c
-#                             WHERE o.stage = 'Closed_Won'
-#                             AND o.campaign_key = c.campaign_key
-#                             Group BY c.campaign_name, c.type, c.cost
-#                             ORDER BY profit DESC
-#                             limit 10;"""))  # insert query here
-#         # point to existing session and modify
-#         session["campaign_roi"] = cur.fetchall()  # fetches query and put into object
-#         session.modified = True
-#         cur.close()  # closes query
-#         conn.close()  # closes connection to db
-#     return render_template('index.html', version=session["db_version"],
-#                            customer_sales=session.get("customer_sales"),
-#                            product_sales=session.get("product_sales"),
-#                            predictive_sales=session.get("predictive_sales"),
-#                            campaign_roi=session.get("campaign_roi"))
+#
+@app.route('/campaign_roi', methods=['POST'])
+def query_campaign_roi():  # template for some query
+    if request.method == 'POST':
+        Month_choice = request.form['table-choice']
+        conn = get_db_connection()
+        cur = conn.cursor()
+        if Month_choice == 'Telemarketing':
+            cur.execute(("""SELECT round(SUM(o.deal_amount_aftertax/c.cost),0) as profit,  c.cost, c.campaign_name, c.type
+                    FROM crm_opportunity o, crm_campaign c 
+                    WHERE o.campaign_key = c.campaign_key
+					AND c.type = 'Telemarketing'
+                    Group BY c.campaign_name, c.type, c.cost
+					ORDER BY profit desc;"""))  # insert query here
+        elif Month_choice == 'Advertising':
+            cur.execute(("""SELECT round(SUM(o.deal_amount_aftertax/c.cost),0) as profit,  c.cost, c.campaign_name, c.type
+                    FROM crm_opportunity o, crm_campaign c 
+                    WHERE o.campaign_key = c.campaign_key
+					AND c.type = 'Advertising'
+                    Group BY c.campaign_name, c.type, c.cost
+					ORDER BY profit desc;"""))  # insert query here
+        elif Month_choice == 'Email':
+            cur.execute(("""SELECT round(SUM(o.deal_amount_aftertax/c.cost),0) as profit,  c.cost, c.campaign_name, c.type
+                            FROM crm_opportunity o, crm_campaign c 
+                            WHERE o.campaign_key = c.campaign_key
+        					AND c.type = 'Email'
+                            Group BY c.campaign_name, c.type, c.cost
+        					ORDER BY profit desc;"""))
+        elif Month_choice == 'Seminar':
+            cur.execute(("""SELECT round(SUM(o.deal_amount_aftertax/c.cost),0) as profit,  c.cost, c.campaign_name, c.type
+                            FROM crm_opportunity o, crm_campaign c 
+                            WHERE o.campaign_key = c.campaign_key
+        					AND c.type = 'Seminar'
+                            Group BY c.campaign_name, c.type, c.cost
+        					ORDER BY profit desc;"""))
+        elif Month_choice == 'Other':
+            cur.execute(("""SELECT round(SUM(o.deal_amount_aftertax/c.cost),0) as profit,  c.cost, c.campaign_name, c.type
+                            FROM crm_opportunity o, crm_campaign c 
+                            WHERE o.campaign_key = c.campaign_key
+        					AND c.type = 'Other'
+                            Group BY c.campaign_name, c.type, c.cost
+        					ORDER BY profit desc;"""))
+        else:
+            cur.execute(("""SELECT round(SUM(o.deal_amount_aftertax/c.cost),0) as profit,  c.cost, c.campaign_name, c.type
+                    FROM crm_opportunity o, crm_campaign c 
+                    WHERE o.campaign_key = c.campaign_key 
+                    Group BY c.campaign_name, c.type, c.cost
+					HAVING SUM(o.deal_amount_aftertax/c.cost) >= ALL (
+						SELECT SUM(o1.deal_amount_aftertax/c1.cost)
+						FROM crm_opportunity o1, crm_campaign c1 
+                    	WHERE o1.campaign_key = c1.campaign_key 
+						AND c.type = c1.type
+						GROUP BY c1.campaign_name
+					)
+					ORDER BY profit desc;"""))  # insert query here
+        # point to existing session and modify
+        session["campaign_roi"] = cur.fetchall()  # fetches query and put into object
+        session.modified = True
+        cur.close()  # closes query
+        conn.close()  # closes connection to db
+    return render_template('index.html', version=session["db_version"],
+                           customer_sales=session.get("customer_sales"),
+                           product_sales=session.get("product_sales"),
+                           predictive_sales=session.get("predictive_sales"),
+                           campaign_roi=session.get("campaign_roi"))
 
 #
 if __name__ == '__main__':
