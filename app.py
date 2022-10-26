@@ -44,11 +44,11 @@ def hello_world():  # put application's code here
     # display the PostgreSQL database server version
     session["db_version"] = cur.fetchone()[0]
     # Sales and Attendance by Day of Week Section Display
-    cur.execute("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, p.product_name, p.category, p.description
-                    FROM crm_opportunity o, crm_product p  
-                    WHERE o.stage = 'Closed_Won'  
-                    AND o.product_key = p.product_key 
-                    GROUP BY p.category, p.product_name, p.description
+    cur.execute("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, c.customer_name, c.type, c.class
+                    FROM crm_opportunity o, crm_customer c  
+                    WHERE o.stage = 'Closed_Won' 
+                    AND o.customer_key = c.customer_key 
+                    GROUP BY c.type, c.class, c.customer_name
                     ORDER BY rev DESC
                     limit 10;""")
     session["sales_dow"] = cur.fetchall()
