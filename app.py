@@ -73,13 +73,13 @@ def hello_world():  # put application's code here
     # session["film_roi"] = cur.fetchall()
 
     # Return on Investment By Film Section Display
-    cur.execute("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, u.user_name, u.b_unit,u.title
-                        FROM crm_opportunity o, crm_user u  
-                        WHERE o.user_key = u.user_key 
-                        AND o.stage != 'Closed_Won'
-                        Group BY u.b_unit, u.title, u.user_name
-                        ORDER BY rev DESC;""")
-    session["promo_roi"] = cur.fetchall()
+    # cur.execute("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, u.user_name, u.b_unit,u.title
+    #                     FROM crm_opportunity o, crm_user u
+    #                     WHERE o.user_key = u.user_key
+    #                     AND o.stage != 'Closed_Won'
+    #                     Group BY u.b_unit, u.title, u.user_name
+    #                     ORDER BY rev DESC;""")
+    # session["promo_roi"] = cur.fetchall()
 #
 #     # Most popular promotion by member’s age and gender
 #     cur.execute("""SELECT m1.age, m1.gender,p1.planner,p1.promotion_name, count(*) total_redemption
@@ -104,9 +104,9 @@ def hello_world():  # put application's code here
     cur.close()
     return render_template('index.html', version=session["db_version"],
                            sales_dow=session.get("sales_dow"),
-                           sales_by_film=session.get("sales_by_film"),
+                           sales_by_film=session.get("sales_by_film"))
                            # film_roi=session.get("film_roi"))
-                           promo_roi=session.get("promo_roi"))
+                           # promo_roi=session.get("promo_roi"))
                            # pop_promo=session.get("pop_promo"))
 #
 #
@@ -161,8 +161,7 @@ def query_sales_dow():  # template for some query
         conn.close()  # closes connection to db
     return render_template('index.html', version=session["db_version"],
                            sales_dow=session.get("sales_dow"),
-                           sales_by_film=session.get("sales_by_film"),
-                           promo_roi=session.get("promo_roi"))
+                           sales_by_film=session.get("sales_by_film"))
 
 
 @app.route('/sales_by_film', methods=['POST'])
@@ -193,8 +192,7 @@ def query_sales_by_film():  # template for some query
                             WHERE o.stage = 'Closed_Won'  
                             AND o.product_key = p.product_key 
                             GROUP BY p.category, p.product_name, p.description
-                            ORDER BY rev desc
-                            limit 10;"""))  # insert query here
+                            ORDER BY rev desc;"""))  # insert query here
         # point to existing session and modify
         session["sales_by_film"] = cur.fetchall()  # fetches query and put into object
         session.modified = True
@@ -202,8 +200,7 @@ def query_sales_by_film():  # template for some query
         conn.close()  # closes connection to db
     return render_template('index.html', version=session["db_version"],
                            sales_dow=session.get("sales_dow"),
-                           sales_by_film=session.get("sales_by_film"),
-                           promo_roi=session.get("promo_roi"))
+                           sales_by_film=session.get("sales_by_film"))
 
 
 # @app.route('/promo_roi', methods=['POST'])
