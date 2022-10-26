@@ -170,7 +170,8 @@ def query_sales_by_film():  # template for some query
                             AND o.close_date < '2022-01-01'
                             AND o.product_key = p.product_key 
                             GROUP BY p.category, p.product_name, p.description
-                            ORDER BY rev desc;"""))  # insert query here
+                            ORDER BY rev desc
+                            limit 10;"""))  # insert query here
         elif Month_choice == '2022':
             cur.execute(("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, p.product_name, p.category, p.description
                             FROM crm_opportunity o, crm_product p  
@@ -178,14 +179,16 @@ def query_sales_by_film():  # template for some query
                             AND o.close_date >= '2022-01-01'
                             AND o.product_key = p.product_key 
                             GROUP BY p.category, p.product_name, p.description
-                            ORDER BY rev desc;"""))  # insert query here
+                            ORDER BY rev desc
+                            limit 10;"""))  # insert query here
         else:
             cur.execute(("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, p.product_name, p.category, p.description
                             FROM crm_opportunity o, crm_product p  
                             WHERE o.stage = 'Closed_Won'  
                             AND o.product_key = p.product_key 
                             GROUP BY p.category, p.product_name, p.description
-                            ORDER BY rev desc;"""))  # insert query here
+                            ORDER BY rev desc
+                            limit 10;"""))  # insert query here
         # point to existing session and modify
         session["sales_by_film"] = cur.fetchall()  # fetches query and put into object
         session.modified = True
@@ -211,7 +214,8 @@ def query_promo_roi():  # template for some query
                             AND o.stage != 'Closed_Won'
                             AND o.create_date < '2022-04-01'
                             Group BY u.b_unit, u.title, u.user_name
-                            ORDER BY rev DESC;"""))  # insert query here
+                            ORDER BY rev DESC
+                            limit 10;"""))  # insert query here
         elif Month_choice == '2022Q1':
             cur.execute(("""SELECT round(sum (o.deal_amount_aftertax * o.win_rate/100),0) as rev, u.user_name, u.b_unit,u.title
                             FROM crm_opportunity o, crm_user u
@@ -220,7 +224,8 @@ def query_promo_roi():  # template for some query
                             AND o.create_date < '2022-04-01'
                             AND o.create_date >= '2022-01-01'
                             Group BY u.b_unit, u.title, u.user_name
-                            ORDER BY rev DESC;"""))
+                            ORDER BY rev DESC
+                            limit 10;"""))
         elif Month_choice == '2022Q2':
             cur.execute(("""SELECT round(sum (o.deal_amount_aftertax * o.win_rate/100),0) as rev, u.user_name, u.b_unit,u.title
                             FROM crm_opportunity o, crm_user u
@@ -229,14 +234,16 @@ def query_promo_roi():  # template for some query
                             AND o.create_date >= '2022-04-01'
                             AND o.create_date < '2022-07-01'
                             Group BY u.b_unit, u.title, u.user_name
-                            ORDER BY rev DESC;"""))  # insert query here
+                            ORDER BY rev DESC
+                            limit 10;"""))  # insert query here
         else:
             cur.execute(("""SELECT round(sum (o.deal_amount_aftertax * o.win_rate/100),0) as rev, u.user_name, u.b_unit,u.title
                             FROM crm_opportunity o, crm_user u
                             WHERE o.user_key = u.user_key
                             AND o.stage != 'Closed_Won'
                             Group BY u.b_unit, u.title, u.user_name
-                            ORDER BY rev DESC;"""))  # insert query here
+                            ORDER BY rev DESC
+                            limit 10;"""))  # insert query here
         # point to existing session and modify
         session["promo_roi"] = cur.fetchall()  # fetches query and put into object
         session.modified = True
