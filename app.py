@@ -43,7 +43,7 @@ def hello_world():  # put application's code here
     cur.execute('SELECT version()')
     # display the PostgreSQL database server version
     session["db_version"] = cur.fetchone()[0]
-    # Sales and Attendance by Day of Week Section Display
+    # Top 10 Historical Sales by customers
     cur.execute("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, c.customer_name, c.type, c.class
                     FROM crm_opportunity o, crm_customer c  
                     WHERE o.stage = 'Closed_Won' 
@@ -53,7 +53,7 @@ def hello_world():  # put application's code here
                     limit 10;""")
     session["customer_sales"] = cur.fetchall()
 
-    # Sales and Attendance by Film Section Display
+    # Top 10 Historical sales by product
     cur.execute("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, p.product_name, p.category, p.description
                     FROM crm_opportunity o, crm_product p  
                     WHERE o.stage = 'Closed_Won'  
@@ -64,7 +64,7 @@ def hello_world():  # put application's code here
     session["sales_by_film"] = cur.fetchall()
 
 
-    # Return on Investment By Film Section Display
+    # Top 10 Predictive Sales by users
     cur.execute("""SELECT round(sum (o.deal_amount_aftertax * o.win_rate/100),0) as rev, u.user_name, u.b_unit,u.title
                         FROM crm_opportunity o, crm_user u
                         WHERE o.user_key = u.user_key
@@ -74,7 +74,7 @@ def hello_world():  # put application's code here
                         limit 10;""")
     session["promo_roi"] = cur.fetchall()
 #
-#     # Most popular promotion by member’s age and gender
+#     # Top 10 Profitable Campaign / Marketing
     cur.execute("""SELECT round(SUM(o.deal_amount_aftertax/c.cost),0) as profit,  c.cost, c.campaign_name, c.type
                     FROM crm_opportunity o, crm_campaign c 
                     WHERE o.stage = 'Closed_Won'  
@@ -89,21 +89,8 @@ def hello_world():  # put application's code here
     return render_template('index.html', version=session["db_version"],
                            customer_sales=session.get("customer_sales"),
                            sales_by_film=session.get("sales_by_film"),
-                           # film_roi=session.get("film_roi"))
                            promo_roi=session.get("promo_roi"),
                            pop_promo=session.get("pop_promo"))
-#
-#
-# # def index():
-# #     conn = get_db_connection()
-# #     cur = conn.cursor()
-# #     cur.execute('SELECT * FROM membership_dimension;')
-# #     members = cur.fetchall()
-# #     cur.close()
-# #     conn.close()
-# #     return render_template('index.html', members=members)
-#
-#
 @app.route('/customer_sales', methods=['POST'])
 def query_customer_sales():  # template for some query
     if request.method == 'POST':
@@ -148,7 +135,6 @@ def query_customer_sales():  # template for some query
                            sales_by_film=session.get("sales_by_film"),
                            promo_roi=session.get("promo_roi"),
                            pop_promo=session.get("pop_promo"))
-
 
 @app.route('/sales_by_film', methods=['POST'])
 def query_sales_by_film():  # template for some query
