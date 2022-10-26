@@ -51,7 +51,7 @@ def hello_world():  # put application's code here
                     GROUP BY c.type, c.class, c.customer_name
                     ORDER BY rev DESC
                     limit 10;""")
-    session["sales_dow"] = cur.fetchall()
+    session["customer_sales"] = cur.fetchall()
 
     # Sales and Attendance by Film Section Display
     cur.execute("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, p.product_name, p.category, p.description
@@ -87,7 +87,7 @@ def hello_world():  # put application's code here
     # close the communication with the PostgreSQL
     cur.close()
     return render_template('index.html', version=session["db_version"],
-                           sales_dow=session.get("sales_dow"),
+                           customer_sales=session.get("customer_sales"),
                            sales_by_film=session.get("sales_by_film"),
                            # film_roi=session.get("film_roi"))
                            promo_roi=session.get("promo_roi"),
@@ -104,8 +104,8 @@ def hello_world():  # put application's code here
 # #     return render_template('index.html', members=members)
 #
 #
-@app.route('/sales_dow', methods=['POST'])
-def query_sales_dow():  # template for some query
+@app.route('/customer_sales', methods=['POST'])
+def query_customer_sales():  # template for some query
     if request.method == 'POST':
         Month_choice = request.form.get('table-choice')
         print(Month_choice)
@@ -138,13 +138,13 @@ def query_sales_dow():  # template for some query
                             ORDER BY rev DESC
                             limit 10; """))  # insert query here
         # point to existing session and modify
-        session["sales_dow"] = cur.fetchall()  # fetches query and put into object
+        session["customer_sales"] = cur.fetchall()  # fetches query and put into object
         session.modified = True
 
         cur.close()  # closes query
         conn.close()  # closes connection to db
     return render_template('index.html', version=session["db_version"],
-                           sales_dow=session.get("sales_dow"),
+                           customer_sales=session.get("customer_sales"),
                            sales_by_film=session.get("sales_by_film"),
                            promo_roi=session.get("promo_roi"),
                            pop_promo=session.get("pop_promo"))
@@ -188,7 +188,7 @@ def query_sales_by_film():  # template for some query
         cur.close()  # closes query
         conn.close()  # closes connection to db
     return render_template('index.html', version=session["db_version"],
-                           sales_dow=session.get("sales_dow"),
+                           customer_sales=session.get("customer_sales"),
                            sales_by_film=session.get("sales_by_film"),
                            promo_roi=session.get("promo_roi"),
                            pop_promo=session.get("pop_promo"))
@@ -243,7 +243,7 @@ def query_promo_roi():  # template for some query
         cur.close()  # closes query
         conn.close()  # closes connection to db
     return render_template('index.html', version=session["db_version"],
-                           sales_dow=session.get("sales_dow"),
+                           customer_sales=session.get("customer_sales"),
                            sales_by_film=session.get("sales_by_film"),
                            promo_roi=session.get("promo_roi"),
                            pop_promo=session.get("pop_promo"))
@@ -287,7 +287,7 @@ def query_pop_promo():  # template for some query
         cur.close()  # closes query
         conn.close()  # closes connection to db
     return render_template('index.html', version=session["db_version"],
-                           sales_dow=session.get("sales_dow"),
+                           customer_sales=session.get("customer_sales"),
                            sales_by_film=session.get("sales_by_film"),
                            promo_roi=session.get("promo_roi"),
                            pop_promo=session.get("pop_promo"))

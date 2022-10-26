@@ -12,14 +12,14 @@
           <div class="col-lg-8 mx-auto text-white text-center">
             <h2 class="text-white">Interactive CRM for Textile SMB </h2>
             <p class="lead">Display historical, prediction sales for textile SMB</p>
-            <h2 class="text-white ">Using Postgres</h2>
+            <h2 class="text-white ">Click Bar and Press Query</h2>
             <p class="lead text-white mt-3 font-weight-normal">{{ version }}</p>
           </div>
         </div>
       </div>
     </div>
     <div class="container">
-        <form method="post" action="/sales_dow#sales_dow" id="sales_dow">
+        <form method="post" action="/customer_sales#customer_sales" id="customer_sales">
             <section class="py-6">
                 <div class="row bg-white shadow mt-n5 border-radius-lg pb-4 p-3 mx-sm-0 mx-1 position-relative">
                     <div class="col-lg-8 mt-lg-n2 mt-2">
@@ -27,7 +27,7 @@
                     </div>
                     <label class="">&nbsp;</label>
                     <div class="col-lg-3">
-                        <select class="form-control" name="table-choice" id="sales_dow-choice" placeholder="Query From Table">
+                        <select class="form-control" name="table-choice" id="customer_sales-choice" placeholder="Query From Table">
                             <option value="2021">2021</option>
                             <option value="2022">2022</option>
                             <option value="Month_All" selected>ALL</option>
@@ -55,7 +55,7 @@
                                     </tr>
                                   </thead>
                                   <tbody>
-                                      {% for item in sales_dow %}
+                                      {% for item in customer_sales %}
                                           <tr>
                                               <td class="align-middle text-center text-sm">
                                                 <div class="d-flex px-2 py-1">
