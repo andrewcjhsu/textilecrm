@@ -260,43 +260,49 @@ def query_predictive_sales():  # template for some query
         Month_choice = request.form['table-choice']
         conn = get_db_connection()
         cur = conn.cursor()
-        if Month_choice == '2021':
-            cur.execute(("""SELECT round(sum (o.deal_amount_aftertax * o.win_rate/100),0) as rev, u.user_name, u.b_unit,u.title
-                            FROM crm_opportunity o, crm_user u
-                            WHERE o.user_key = u.user_key
-                            AND o.stage != 'Closed_Won'
-                            AND o.create_date < '2022-04-01'
-                            Group BY u.b_unit, u.title, u.user_name
-                            ORDER BY rev DESC
-                            limit 10;"""))  # insert query here
-        elif Month_choice == '2022Q1':
-            cur.execute(("""SELECT round(sum (o.deal_amount_aftertax * o.win_rate/100),0) as rev, u.user_name, u.b_unit,u.title
-                            FROM crm_opportunity o, crm_user u
-                            WHERE o.user_key = u.user_key
-                            AND o.stage != 'Closed_Won'
-                            AND o.create_date < '2022-04-01'
-                            AND o.create_date >= '2022-01-01'
-                            Group BY u.b_unit, u.title, u.user_name
-                            ORDER BY rev DESC
-                            limit 10;"""))
-        elif Month_choice == '2022Q2':
-            cur.execute(("""SELECT round(sum (o.deal_amount_aftertax * o.win_rate/100),0) as rev, u.user_name, u.b_unit,u.title
-                            FROM crm_opportunity o, crm_user u
-                            WHERE o.user_key = u.user_key
-                            AND o.stage != 'Closed_Won'
-                            AND o.create_date >= '2022-04-01'
-                            AND o.create_date < '2022-07-01'
-                            Group BY u.b_unit, u.title, u.user_name
-                            ORDER BY rev DESC
-                            limit 10;"""))  # insert query here
+        if Month_choice == 'Q1':
+            cur.execute(("""SELECT round(avg (o.deal_amount_aftertax),0) as rev, u.b_unit,u.title
+                        FROM crm_opportunity o, crm_user u, crm_update d
+                        WHERE o.user_key = u.user_key
+						AND o.date_key = d.date_key
+						AND d.quarter = '1'
+                        Group BY u.b_unit, u.title
+                        ORDER BY rev DESC
+                        limit 10;"""))  # insert query here
+        elif Month_choice == 'Q2':
+            cur.execute(("""SELECT round(avg (o.deal_amount_aftertax),0) as rev, u.b_unit,u.title
+                        FROM crm_opportunity o, crm_user u, crm_update d
+                        WHERE o.user_key = u.user_key
+						AND o.date_key = d.date_key
+						AND d.quarter = '2'
+                        Group BY u.b_unit, u.title
+                        ORDER BY rev DESC
+                        limit 10;"""))
+        elif Month_choice == 'Q3':
+            cur.execute(("""SELECT round(avg (o.deal_amount_aftertax),0) as rev, u.b_unit,u.title
+                        FROM crm_opportunity o, crm_user u, crm_update d
+                        WHERE o.user_key = u.user_key
+						AND o.date_key = d.date_key
+						AND d.quarter = '1'
+                        Group BY u.b_unit, u.title
+                        ORDER BY rev DESC
+                        limit 10;"""))  # insert query here
+        elif Month_choice == 'Q4':
+            cur.execute(("""SELECT round(avg (o.deal_amount_aftertax),0) as rev, u.b_unit,u.title
+                                FROM crm_opportunity o, crm_user u, crm_update d
+                                WHERE o.user_key = u.user_key
+        						AND o.date_key = d.date_key
+        						AND d.quarter = '4'
+                                Group BY u.b_unit, u.title
+                                ORDER BY rev DESC
+                                limit 10;"""))
         else:
-            cur.execute(("""SELECT round(sum (o.deal_amount_aftertax * o.win_rate/100),0) as rev, u.user_name, u.b_unit,u.title
-                            FROM crm_opportunity o, crm_user u
-                            WHERE o.user_key = u.user_key
-                            AND o.stage != 'Closed_Won'
-                            Group BY u.b_unit, u.title, u.user_name
-                            ORDER BY rev DESC
-                            limit 10;"""))  # insert query here
+            cur.execute(("""SELECT round(avg (o.deal_amount_aftertax),0) as rev, u.b_unit,u.title
+                        FROM crm_opportunity o, crm_user u
+                        WHERE o.user_key = u.user_key
+                        Group BY u.b_unit, u.title
+                        ORDER BY rev DESC
+                        limit 10;"""))  # insert query here
         # point to existing session and modify
         session["predictive_sales"] = cur.fetchall()  # fetches query and put into object
         session.modified = True
