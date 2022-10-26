@@ -63,14 +63,6 @@ def hello_world():  # put application's code here
                     limit 10;""")
     session["sales_by_film"] = cur.fetchall()
 
-    # # Return on Investment By Film Section Display
-    # cur.execute("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, u.user_name, u.b_unit,u.title
-    #                 FROM crm_opportunity o, crm_user u
-    #                 WHERE o.user_key = u.user_key
-    #                 AND o.stage != 'Closed_Won'
-    #                 Group BY u.b_unit, u.title, u.user_name
-    #                 ORDER BY rev DESC;""")
-    # session["film_roi"] = cur.fetchall()
 
     # Return on Investment By Film Section Display
     cur.execute("""SELECT round(sum (o.deal_amount_aftertax * o.win_rate/100),0) as rev, u.user_name, u.b_unit,u.title
