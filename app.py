@@ -5,7 +5,7 @@ from flask import Flask, redirect, request, render_template, url_for, session, f
 from urllib.parse import urlparse
 
 app = Flask(__name__)
-app.secret_key = 'I Love Databases'
+app.secret_key = 'I Hate Databases'
 
 
 def get_db_connection():
