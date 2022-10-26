@@ -166,32 +166,82 @@ def query_product_sales():  # template for some query
         Month_choice = request.form['table-choice']
         conn = get_db_connection()
         cur = conn.cursor()
-        if Month_choice == '2021':
+        if Month_choice == 'Q1':
             cur.execute(("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, p.product_name, p.category, p.description
-                            FROM crm_opportunity o, crm_product p  
-                            WHERE o.stage = 'Closed_Won' 
-                            AND o.close_date < '2022-01-01'
-                            AND o.product_key = p.product_key 
-                            GROUP BY p.category, p.product_name, p.description
-                            ORDER BY rev desc
-                            limit 10;"""))  # insert query here
-        elif Month_choice == '2022':
+                                        FROM crm_opportunity o, crm_product p, crm_update d 
+                                        WHERE o.product_key = p.product_key
+            					        AND o.date_key = d.date_key
+            					        AND d.quarter = '1'
+                                        GROUP by p.product_name, p.category, p.description
+                                        HAVING sum (o.deal_amount_aftertax) >= ALL
+            	                            (select sum (o1.deal_amount_aftertax)
+            	                            FROM crm_opportunity o1, crm_product p1, crm_update d1
+            	                            WHERE o1.product_key = p1.product_key
+            					 	        AND o1.date_key = d1.date_key
+            						        AND d1.quarter = '1'
+            	                            AND p.category = p1.category
+            	                            GROUP by p1.product_name)
+                                            ORDER BY rev DESC;"""))
+        elif Month_choice == 'Q2':
             cur.execute(("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, p.product_name, p.category, p.description
-                            FROM crm_opportunity o, crm_product p  
-                            WHERE o.stage = 'Closed_Won' 
-                            AND o.close_date >= '2022-01-01'
-                            AND o.product_key = p.product_key 
-                            GROUP BY p.category, p.product_name, p.description
-                            ORDER BY rev desc
-                            limit 10;"""))  # insert query here
+                            FROM crm_opportunity o, crm_product p, crm_update d 
+                            WHERE o.product_key = p.product_key
+					        AND o.date_key = d.date_key
+					        AND d.quarter = '2'
+                            GROUP by p.product_name, p.category, p.description
+                            HAVING sum (o.deal_amount_aftertax) >= ALL
+	                            (select sum (o1.deal_amount_aftertax)
+	                            FROM crm_opportunity o1, crm_product p1, crm_update d1
+	                            WHERE o1.product_key = p1.product_key
+					 	        AND o1.date_key = d1.date_key
+						        AND d1.quarter = '2'
+	                            AND p.category = p1.category
+	                            GROUP by p1.product_name)
+                                ORDER BY rev DESC;"""))  # insert query here
+        elif Month_choice == 'Q3':
+            cur.execute(("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, p.product_name, p.category, p.description
+                                    FROM crm_opportunity o, crm_product p, crm_update d 
+                                    WHERE o.product_key = p.product_key
+        					        AND o.date_key = d.date_key
+        					        AND d.quarter = '3'
+                                    GROUP by p.product_name, p.category, p.description
+                                    HAVING sum (o.deal_amount_aftertax) >= ALL
+        	                            (select sum (o1.deal_amount_aftertax)
+        	                            FROM crm_opportunity o1, crm_product p1, crm_update d1
+        	                            WHERE o1.product_key = p1.product_key
+        					 	        AND o1.date_key = d1.date_key
+        						        AND d1.quarter = '3'
+        	                            AND p.category = p1.category
+        	                            GROUP by p1.product_name)
+                                        ORDER BY rev DESC;"""))
+        elif Month_choice == 'Q4':
+            cur.execute(("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, p.product_name, p.category, p.description
+                                    FROM crm_opportunity o, crm_product p, crm_update d 
+                                    WHERE o.product_key = p.product_key
+        					        AND o.date_key = d.date_key
+        					        AND d.quarter = '4'
+                                    GROUP by p.product_name, p.category, p.description
+                                    HAVING sum (o.deal_amount_aftertax) >= ALL
+        	                            (select sum (o1.deal_amount_aftertax)
+        	                            FROM crm_opportunity o1, crm_product p1, crm_update d1
+        	                            WHERE o1.product_key = p1.product_key
+        					 	        AND o1.date_key = d1.date_key
+        						        AND d1.quarter = '4'
+        	                            AND p.category = p1.category
+        	                            GROUP by p1.product_name)
+                                        ORDER BY rev DESC;"""))
         else:
             cur.execute(("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, p.product_name, p.category, p.description
-                            FROM crm_opportunity o, crm_product p  
-                            WHERE o.stage = 'Closed_Won'  
-                            AND o.product_key = p.product_key 
-                            GROUP BY p.category, p.product_name, p.description
-                            ORDER BY rev desc
-                            limit 10;"""))  # insert query here
+                    FROM crm_opportunity o, crm_product p  
+                    WHERE o.product_key = p.product_key 
+                    GROUP by p.product_name, p.category, p.description
+                    HAVING sum (o.deal_amount_aftertax) >= ALL
+	                (select sum (o1.deal_amount_aftertax)
+	                    FROM crm_opportunity o1, crm_product p1
+	                    WHERE o1.product_key = p1.product_key
+	                    AND p.category = p1.category
+	                    GROUP by p1.product_name)
+                    ORDER BY rev DESC;"""))  # insert query here
         # point to existing session and modify
         session["product_sales"] = cur.fetchall()  # fetches query and put into object
         session.modified = True
