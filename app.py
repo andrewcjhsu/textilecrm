@@ -73,13 +73,13 @@ def hello_world():  # put application's code here
     # session["film_roi"] = cur.fetchall()
 
     # Return on Investment By Film Section Display
-    # cur.execute("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, u.user_name, u.b_unit,u.title
-    #                     FROM crm_opportunity o, crm_user u
-    #                     WHERE o.user_key = u.user_key
-    #                     AND o.stage != 'Closed_Won'
-    #                     Group BY u.b_unit, u.title, u.user_name
-    #                     ORDER BY rev DESC;""")
-    # session["promo_roi"] = cur.fetchall()
+    cur.execute("""SELECT round(sum (o.deal_amount_aftertax),0) as rev, u.user_name, u.b_unit,u.title
+                        FROM crm_opportunity o, crm_user u
+                        WHERE o.user_key = u.user_key
+                        AND o.stage != 'Closed_Won'
+                        Group BY u.b_unit, u.title, u.user_name
+                        ORDER BY rev DESC;""")
+    session["promo_roi"] = cur.fetchall()
 #
 #     # Most popular promotion by member’s age and gender
 #     cur.execute("""SELECT m1.age, m1.gender,p1.planner,p1.promotion_name, count(*) total_redemption
@@ -104,9 +104,9 @@ def hello_world():  # put application's code here
     cur.close()
     return render_template('index.html', version=session["db_version"],
                            sales_dow=session.get("sales_dow"),
-                           sales_by_film=session.get("sales_by_film"))
+                           sales_by_film=session.get("sales_by_film"),
                            # film_roi=session.get("film_roi"))
-                           # promo_roi=session.get("promo_roi"))
+                           promo_roi=session.get("promo_roi"))
                            # pop_promo=session.get("pop_promo"))
 #
 #
