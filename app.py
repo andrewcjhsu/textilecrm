@@ -88,7 +88,7 @@ def hello_world():  # put application's code here
                     AND o.campaign_key = c.campaign_key 
                     Group BY c.campaign_name, c.type, c.cost
                     ORDER BY profit DESC
-                    limit 10; """)
+                    limit 10;""")
     session["pop_promo"] = cur.fetchall()
 #
     # close the communication with the PostgreSQL
@@ -153,8 +153,7 @@ def query_sales_dow():  # template for some query
     return render_template('index.html', version=session["db_version"],
                            sales_dow=session.get("sales_dow"),
                            sales_by_film=session.get("sales_by_film"),
-                           promo_roi=session.get("promo_roi"),
-                            pop_promo = session.get("pop_promo")
+                           promo_roi=session.get("promo_roi")
                            )
 
 
@@ -196,7 +195,6 @@ def query_sales_by_film():  # template for some query
                            sales_dow=session.get("sales_dow"),
                            sales_by_film=session.get("sales_by_film"),
                            promo_roi=session.get("promo_roi"),
-                           pop_promo = session.get("pop_promo")
                            )
 
 
@@ -248,8 +246,7 @@ def query_promo_roi():  # template for some query
                            sales_dow=session.get("sales_dow"),
                            sales_by_film=session.get("sales_by_film"),
                            # film_roi=session.get("film_roi"),
-                           promo_roi=session.get("promo_roi"),
-                           pop_promo=session.get("pop_promo"))
+                           promo_roi=session.get("promo_roi"))
 
 #
 # @app.route('/pop_promo', methods=['POST'])
