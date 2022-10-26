@@ -61,7 +61,7 @@ def hello_world():  # put application's code here
                     GROUP BY p.category, p.product_name, p.description
                     ORDER BY rev desc
                     limit 10;""")
-    session["sales_by_film"] = cur.fetchall()
+    session["product_sales"] = cur.fetchall()
 
 
     # Top 10 Predictive Sales by users
@@ -72,7 +72,7 @@ def hello_world():  # put application's code here
                         Group BY u.b_unit, u.title, u.user_name
                         ORDER BY rev DESC
                         limit 10;""")
-    session["promo_roi"] = cur.fetchall()
+    session["predictive_sales"] = cur.fetchall()
 #
 #     # Top 10 Profitable Campaign / Marketing
     cur.execute("""SELECT round(SUM(o.deal_amount_aftertax/c.cost),0) as profit,  c.cost, c.campaign_name, c.type
@@ -82,15 +82,15 @@ def hello_world():  # put application's code here
                     Group BY c.campaign_name, c.type, c.cost
                     ORDER BY profit DESC
                     limit 10;""")
-    session["pop_promo"] = cur.fetchall()
+    session["campaign_roi"] = cur.fetchall()
 #
     # close the communication with the PostgreSQL
     cur.close()
     return render_template('index.html', version=session["db_version"],
                            customer_sales=session.get("customer_sales"),
-                           sales_by_film=session.get("sales_by_film"),
-                           promo_roi=session.get("promo_roi"),
-                           pop_promo=session.get("pop_promo"))
+                           product_sales=session.get("product_sales"),
+                           predictive_sales=session.get("predictive_sales"),
+                           campaign_roi=session.get("campaign_roi"))
 @app.route('/customer_sales', methods=['POST'])
 def query_customer_sales():  # template for some query
     if request.method == 'POST':
@@ -132,12 +132,12 @@ def query_customer_sales():  # template for some query
         conn.close()  # closes connection to db
     return render_template('index.html', version=session["db_version"],
                            customer_sales=session.get("customer_sales"),
-                           sales_by_film=session.get("sales_by_film"),
-                           promo_roi=session.get("promo_roi"),
-                           pop_promo=session.get("pop_promo"))
+                           product_sales=session.get("product_sales"),
+                           predictive_sales=session.get("predictive_sales"),
+                           campaign_roi=session.get("campaign_roi"))
 
-@app.route('/sales_by_film', methods=['POST'])
-def query_sales_by_film():  # template for some query
+@app.route('/product_sales', methods=['POST'])
+def query_product_sales():  # template for some query
     if request.method == 'POST':
         Month_choice = request.form['table-choice']
         conn = get_db_connection()
@@ -169,19 +169,19 @@ def query_sales_by_film():  # template for some query
                             ORDER BY rev desc
                             limit 10;"""))  # insert query here
         # point to existing session and modify
-        session["sales_by_film"] = cur.fetchall()  # fetches query and put into object
+        session["product_sales"] = cur.fetchall()  # fetches query and put into object
         session.modified = True
         cur.close()  # closes query
         conn.close()  # closes connection to db
     return render_template('index.html', version=session["db_version"],
                            customer_sales=session.get("customer_sales"),
-                           sales_by_film=session.get("sales_by_film"),
-                           promo_roi=session.get("promo_roi"),
-                           pop_promo=session.get("pop_promo"))
+                           product_sales=session.get("product_sales"),
+                           predictive_sales=session.get("predictive_sales"),
+                           campaign_roi=session.get("campaign_roi"))
 
 
-@app.route('/promo_roi', methods=['POST'])
-def query_promo_roi():  # template for some query
+@app.route('/predictive_sales', methods=['POST'])
+def query_predictive_sales():  # template for some query
     if request.method == 'POST':
         Month_choice = request.form['table-choice']
         conn = get_db_connection()
@@ -224,19 +224,19 @@ def query_promo_roi():  # template for some query
                             ORDER BY rev DESC
                             limit 10;"""))  # insert query here
         # point to existing session and modify
-        session["promo_roi"] = cur.fetchall()  # fetches query and put into object
+        session["predictive_sales"] = cur.fetchall()  # fetches query and put into object
         session.modified = True
         cur.close()  # closes query
         conn.close()  # closes connection to db
     return render_template('index.html', version=session["db_version"],
                            customer_sales=session.get("customer_sales"),
-                           sales_by_film=session.get("sales_by_film"),
-                           promo_roi=session.get("promo_roi"),
-                           pop_promo=session.get("pop_promo"))
+                           product_sales=session.get("product_sales"),
+                           predictive_sales=session.get("predictive_sales"),
+                           campaign_roi=session.get("campaign_roi"))
 
 #
-@app.route('/pop_promo', methods=['POST'])
-def query_pop_promo():  # template for some query
+@app.route('/campaign_roi', methods=['POST'])
+def query_campaign_roi():  # template for some query
     if request.method == 'POST':
         Month_choice = request.form['table-choice']
         conn = get_db_connection()
@@ -268,15 +268,15 @@ def query_pop_promo():  # template for some query
                             ORDER BY profit DESC
                             limit 10;"""))  # insert query here
         # point to existing session and modify
-        session["pop_promo"] = cur.fetchall()  # fetches query and put into object
+        session["campaign_roi"] = cur.fetchall()  # fetches query and put into object
         session.modified = True
         cur.close()  # closes query
         conn.close()  # closes connection to db
     return render_template('index.html', version=session["db_version"],
                            customer_sales=session.get("customer_sales"),
-                           sales_by_film=session.get("sales_by_film"),
-                           promo_roi=session.get("promo_roi"),
-                           pop_promo=session.get("pop_promo"))
+                           product_sales=session.get("product_sales"),
+                           predictive_sales=session.get("predictive_sales"),
+                           campaign_roi=session.get("campaign_roi"))
 
 #
 if __name__ == '__main__':
