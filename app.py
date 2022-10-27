@@ -283,7 +283,7 @@ def query_predictive_sales():  # template for some query
                         FROM crm_opportunity o, crm_user u, crm_update d
                         WHERE o.user_key = u.user_key
 						AND o.date_key = d.date_key
-						AND d.quarter = '1'
+						AND d.quarter = '3'
                         Group BY u.b_unit, u.title
                         ORDER BY rev DESC
                         limit 10;"""))  # insert query here
